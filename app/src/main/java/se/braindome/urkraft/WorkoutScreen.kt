@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -28,6 +30,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -35,6 +38,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -42,6 +46,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.braindome.urkraft.model.Exercise
+import se.braindome.urkraft.model.Repository
+import se.braindome.urkraft.model.Workout
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,6 +96,31 @@ fun WorkoutScreen() {
 
 
     }
+}
+
+@Composable
+fun WorkoutCard() {
+    val mockWorkout = Repository.getWorkouts()[0]
+    Card(
+        modifier = Modifier,
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(4.dp),
+        border = BorderStroke(1.dp, Color.Gray),
+        colors = CardDefaults.cardColors(Color.Gray, Color.White,)
+    ) {
+        LazyColumn {
+            item {
+                Text(
+                    text = mockWorkout.name,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            items(mockWorkout.exercises) { exercise ->
+                ExerciseRow(exercise, remember { mutableStateOf(List(exercise.sets) { false }) })
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -166,61 +197,57 @@ fun AddExerciseDialog(
 
 @Composable
 fun ExerciseRow(exercise: Exercise, completedSets: MutableState<List<Boolean>>) {
+    var isExpanded by remember { mutableStateOf(false) }
     Card(
-        modifier = Modifier.padding(vertical = 8.dp),
+        modifier = Modifier.padding(8.dp),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        border = BorderStroke(1.dp, Color.Gray)
+        border = BorderStroke(1.dp, Color.Gray),
+        onClick = { isExpanded = !isExpanded }
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = exercise.name, style = MaterialTheme.typography.labelSmall)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column {
-                        Text(text = "Sets", style = MaterialTheme.typography.labelSmall)
-                        Text(text = "${exercise.sets}", style = MaterialTheme.typography.labelSmall)
-                    }
-                    Column {
-                        Text(text = "Reps", style = MaterialTheme.typography.labelSmall)
-                        Text(text = "${exercise.reps}", style = MaterialTheme.typography.labelSmall)
-                    }
-                    Column {
-                        Text(text = "Weight", style = MaterialTheme.typography.labelSmall)
-                        Text(text = "${exercise.weight}", style = MaterialTheme.typography.labelSmall)
-                    }
-                    Spacer(modifier = Modifier.width(80.dp))
-                    IconButton(
-                        onClick = { /* TODO: Implement edit exercise */ },
-                        modifier = Modifier.weight(0.3f)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = exercise.name,
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                ),
+                modifier = Modifier.weight(0.5f))
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(imageVector = Icons.Default.Edit, contentDescription = "edit")
+            }
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "delete")
+            }
+        }
+        if (isExpanded) {
+            Column {
+                for (i in 0 until exercise.sets) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(start = 32.dp)
                     ) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Edit exercise")
-                    }
-                    IconButton(
-                        onClick = { /* TODO: Implement remove exercise */ },
-                        modifier = Modifier.weight(0.3f)
-                    ) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Remove exercise")
+
+                        Text("Set ${i + 1}", Modifier.weight(0.3f))
+                        Text("Reps: ${exercise.reps}", Modifier.weight(0.3f))
+                        Checkbox(
+                            checked = completedSets.value[i],
+                            onCheckedChange = {
+                                completedSets.value =
+                                    completedSets.value.toMutableList().apply { set(i, it) }
+                            },
+                            modifier = Modifier.padding(end = 16.dp)
+                        )
                     }
                 }
             }
-//            Row {
-//                for (i in 0 until exercise.sets) {
-//                    Checkbox(
-//                        checked = completedSets.value[i],
-//                        onCheckedChange = { isChecked ->
-//                            completedSets.value = completedSets.value.toMutableList().also { it[i] = isChecked }
-//                        },
-//                        modifier = Modifier.padding(horizontal = 4.dp)
-//                    )
-//                }
-//            }
         }
+
     }
 }
 
@@ -228,6 +255,12 @@ fun ExerciseRow(exercise: Exercise, completedSets: MutableState<List<Boolean>>) 
 @Composable
 fun WorkoutScreenPreview() {
     WorkoutScreen()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun WorkoutCardPreview() {
+    WorkoutCard()
 }
 
 @Preview(showBackground = true)
