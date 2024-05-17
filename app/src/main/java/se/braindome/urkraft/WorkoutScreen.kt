@@ -99,25 +99,28 @@ fun WorkoutScreen() {
 }
 
 @Composable
-fun WorkoutCard() {
-    val mockWorkout = Repository.getWorkouts()[0]
+fun WorkoutCard(workout: Workout) {
+    var isExpanded by remember { mutableStateOf(false) }
+
     Card(
-        modifier = Modifier,
+        modifier = Modifier.fillMaxWidth().padding(8.dp),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(4.dp),
         border = BorderStroke(1.dp, Color.Gray),
-        colors = CardDefaults.cardColors(Color.Gray, Color.White,)
+        colors = CardDefaults.cardColors(Color.Gray, Color.White,),
+        onClick = { isExpanded = !isExpanded }
     ) {
-        LazyColumn {
-            item {
-                Text(
-                    text = mockWorkout.name,
-                    modifier = Modifier.padding(16.dp)
-                )
+        Column {
+            Text(
+                text = workout.name,
+                modifier = Modifier.padding(16.dp)
+            )
+            if (isExpanded) {
+                workout.exercises.forEach { exercise ->
+                    ExerciseRow(exercise, remember { mutableStateOf(List(exercise.sets) { false }) })
+                }
             }
-            items(mockWorkout.exercises) { exercise ->
-                ExerciseRow(exercise, remember { mutableStateOf(List(exercise.sets) { false }) })
-            }
+
         }
     }
 
@@ -260,7 +263,7 @@ fun WorkoutScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun WorkoutCardPreview() {
-    WorkoutCard()
+    WorkoutCard(Repository.getWorkouts()[0])
 }
 
 @Preview(showBackground = true)
