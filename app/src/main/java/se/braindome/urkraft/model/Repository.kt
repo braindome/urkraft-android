@@ -61,4 +61,15 @@ object Repository {
         )
     }
 
+    fun getFewerExercises(): List<Exercise> {
+        return listOf(
+            Exercise(name = "Bench Press", sets = 3, reps = 10, weight = 50f),
+            Exercise(name = "Incline Bench Press", sets = 3, reps = 10, weight = 40f),
+            Exercise(name = "Dumbbell Flyes", sets = 3, reps = 10, weight = 20f),
+            Exercise(name = "Squats", sets = 3, reps = 10, weight = 70f),
+            Exercise(name = "Leg Press", sets = 3, reps = 10, weight = 100f),
+            // Add more exercises as needed
+        )
+    }
+
 }
