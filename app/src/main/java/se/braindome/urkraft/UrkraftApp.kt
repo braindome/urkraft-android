@@ -45,13 +45,6 @@ fun UrkraftApp() {
                 actions = { /* TODO */ }
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /*TODO*/ },
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add workout")
-            }
-        },
         bottomBar = {
             UrkraftBottomAppBar(navController)
         }
