@@ -37,6 +37,7 @@ import se.braindome.urkraft.model.Repository
 fun UrkraftApp() {
 
     val navController = rememberNavController()
+    val currentWorkoutViewModel = TodayScreenViewModel()
 
     Scaffold(
         topBar = {
@@ -51,7 +52,7 @@ fun UrkraftApp() {
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             NavHost(navController = navController, startDestination = "home") {
-                composable(UrkraftRoutes.TODAY.route) { TodayScreen() }
+                composable(UrkraftRoutes.TODAY.route) { TodayScreen(currentWorkoutViewModel) }
                 composable(UrkraftRoutes.HOME.route) { HomeScreen() }
                 composable(UrkraftRoutes.PROFILE.route) { ProfileScreen() }
                 composable(UrkraftRoutes.SETTINGS.route) { SettingsScreen() }

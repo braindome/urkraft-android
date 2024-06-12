@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -50,7 +51,9 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -61,20 +64,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import se.braindome.urkraft.model.Exercise
 import se.braindome.urkraft.model.Repository
 import se.braindome.urkraft.util.ColorSaver
+import timber.log.Timber
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayScreen() {
+fun TodayScreen(viewModel: TodayScreenViewModel) {
 
-    val todaysExercises = Repository.getFewerExercises().toMutableList()
+    //val todaysExercises = Repository.getFewerExercises().toMutableList()
+    val todaysExercises by viewModel.exercises.collectAsState()
+    Timber.d("Today's exercises: $todaysExercises")
     val itemList = remember { SnapshotStateList<Exercise>().apply { addAll(todaysExercises) } }
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -119,7 +127,7 @@ fun TodayScreen() {
                     onDismissRequest = { showBottomSheet = false },
                     sheetState = sheetState,
                 ) {
-                    AddExerciseScreen()
+                    AddExerciseScreen(viewModel)
                 }
             }
             
@@ -140,11 +148,17 @@ fun removeItem(item: Exercise, itemList: SnapshotStateList<Exercise>) {
 }
 
 @Composable
-fun AddExerciseScreen() {
-    var exerciseName by rememberSaveable { mutableStateOf("") }
-    var sets by rememberSaveable { mutableStateOf(3) }
-    var reps by rememberSaveable { mutableStateOf(8) }
-    var weight by rememberSaveable { mutableStateOf(60f) }
+fun AddExerciseScreen(viewModel: TodayScreenViewModel) {
+    // var exerciseName by rememberSaveable { mutableStateOf("") }
+    // var sets by rememberSaveable { mutableStateOf(3) }
+    // var reps by rememberSaveable { mutableStateOf(8) }
+    // var weight by rememberSaveable { mutableStateOf(60f) }
+
+    val exerciseName by viewModel.exerciseName.observeAsState("")
+    val sets by viewModel.sets.observeAsState(0)
+    val reps by viewModel.reps.observeAsState(0)
+    val weight by viewModel.weight.observeAsState(0f)
+
     var exerciseColor by rememberSaveable(saver = ColorSaver) { mutableStateOf(Color.Red) } // Default color
     var showColorPicker by remember { mutableStateOf(false) }
 
@@ -180,7 +194,7 @@ fun AddExerciseScreen() {
             ) { }
             TextField(
                 value = exerciseName,
-                onValueChange = { exerciseName = it },
+                onValueChange = { viewModel.updateExerciseName(it) },
                 label = { Text("Exercise name") },
                 placeholder = { Text("Enter exercise name") },
                 modifier = Modifier.fillMaxWidth()
@@ -194,32 +208,54 @@ fun AddExerciseScreen() {
         Row {
             TextField(
                 value = sets.toString(), 
-                onValueChange = { sets = it.toIntOrNull() ?: sets },
+                onValueChange = {
+                    if (!it.contains(".") && !it.contains(",")) {
+                        it.toIntOrNull()?.let { it1 -> viewModel.updateSets(it1) } ?: sets ?:0
+                    }
+                },
                 label = { Text("Sets") },
                 placeholder = { Text("Enter number of sets") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
                 value = reps.toString(),
-                onValueChange = { reps = it.toIntOrNull() ?: reps },
+                onValueChange = {
+                    if (!it.contains(".") && !it.contains(",")) {
+                        it.toIntOrNull()?.let { it1 -> viewModel.updateReps(it1) } ?: reps ?:0
+                    }
+                },
                 label = { Text("Reps") },
                 placeholder = { Text("Enter number of reps") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
                 value = weight.toString(),
-                onValueChange = { weight = it.toFloatOrNull() ?: weight},
+                onValueChange = {
+                    viewModel.updateWeight(it.toFloatOrNull() ?: weight ?: 0f)
+                },
                 label = { Text("Weight") },
                 placeholder = { Text("Enter weight") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
         }
         
         Spacer(modifier = Modifier.padding(8.dp))
         
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            viewModel.addExerciseToList(
+                Exercise(
+                    name = exerciseName,
+                    sets = sets,
+                    reps = reps,
+                    weight = weight,
+                )
+            )
+        }) {
             Text(text = "Confirm")
         }
 
@@ -357,7 +393,7 @@ fun TodayExerciseRow(exercise: Exercise) {
 @Preview(showBackground = true)
 @Composable
 fun TodayScreenPreview() {
-    TodayScreen()
+    TodayScreen(viewModel = TodayScreenViewModel())
 }
 
 @Preview(showBackground = true)
