@@ -320,35 +320,6 @@ fun SwipeToDismissItem(
 
     }
 
-    /*
-    SwipeToDismissBox(
-        state = swipeToDismissState, 
-        backgroundContent = {
-            val backgroundColor by animateColorAsState(
-                targetValue = when (swipeToDismissState.currentValue) {
-                    SwipeToDismissBoxValue.StartToEnd -> Color.Red
-                    SwipeToDismissBoxValue.EndToStart -> Color.Red
-                    SwipeToDismissBoxValue.Settled -> Color.Transparent
-                },
-                label = "Animate bg color")
-            Box(modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .fillMaxHeight()
-                .background(backgroundColor),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete", tint = Color.White)
-
-            }
-        },
-        modifier = modifier
-    ) {
-        TodayExerciseRow(item)
-    }
-
-     */
-
-
 }
 
 @Composable
