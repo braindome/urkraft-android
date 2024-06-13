@@ -1,13 +1,10 @@
 package se.braindome.urkraft
 
-import android.widget.Space
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,10 +25,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -41,6 +38,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -49,37 +47,37 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import se.braindome.urkraft.model.Exercise
-import se.braindome.urkraft.model.Repository
 import se.braindome.urkraft.util.ColorSaver
-import kotlin.time.Duration.Companion.seconds
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayScreen() {
+fun TodayScreen(viewModel: TodayScreenViewModel) {
 
-    val todaysExercises = Repository.getFewerExercises().toMutableList()
-    val itemList = remember { SnapshotStateList<Exercise>().apply { addAll(todaysExercises) } }
+    val exercises by viewModel.exercises.collectAsState()
+    Timber.d("Today's exercises: $exercises")
 
-    var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
 
     Surface(
         shadowElevation = 5.dp,
@@ -102,10 +100,10 @@ fun TodayScreen() {
                     contentPadding = PaddingValues(8.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(itemList, key = { it.id }) { item ->
+                    items(exercises, key = { it.id }) { item ->
                         SwipeToDismissItem(
                             item = item,
-                            itemList = itemList,
+                            viewModel = viewModel,
                             modifier = Modifier
                                 .animateItem(spring(200F))
 
@@ -114,17 +112,17 @@ fun TodayScreen() {
                 }
             }
             
-            if (showBottomSheet) {
+            if (sheetState.isVisible) {
                 ModalBottomSheet(
-                    onDismissRequest = { showBottomSheet = false },
+                    onDismissRequest = { coroutineScope.launch { sheetState.hide() } },
                     sheetState = sheetState,
                 ) {
-                    AddExerciseScreen()
+                    AddExerciseScreen(viewModel, sheetState)
                 }
             }
             
             FloatingActionButton(
-                onClick = { showBottomSheet = true },
+                onClick = { coroutineScope.launch { sheetState.show() } },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp)
@@ -135,18 +133,19 @@ fun TodayScreen() {
     }
 }
 
-fun removeItem(item: Exercise, itemList: SnapshotStateList<Exercise>) {
-    itemList.remove(item)
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddExerciseScreen() {
-    var exerciseName by rememberSaveable { mutableStateOf("") }
-    var sets by rememberSaveable { mutableStateOf(3) }
-    var reps by rememberSaveable { mutableStateOf(8) }
-    var weight by rememberSaveable { mutableStateOf(60f) }
+fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState) {
+
+    val exerciseName by viewModel.exerciseName.observeAsState("")
+    val sets by viewModel.sets.observeAsState(0)
+    val reps by viewModel.reps.observeAsState(0)
+    val weight by viewModel.weight.observeAsState(0f)
+
     var exerciseColor by rememberSaveable(saver = ColorSaver) { mutableStateOf(Color.Red) } // Default color
     var showColorPicker by remember { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -180,49 +179,73 @@ fun AddExerciseScreen() {
             ) { }
             TextField(
                 value = exerciseName,
-                onValueChange = { exerciseName = it },
+                onValueChange = { viewModel.updateExerciseName(it) },
                 label = { Text("Exercise name") },
                 placeholder = { Text("Enter exercise name") },
                 modifier = Modifier.fillMaxWidth()
             )
         }
-
-
         
         Spacer(modifier = Modifier.padding(8.dp))
         
         Row {
             TextField(
                 value = sets.toString(), 
-                onValueChange = { sets = it.toIntOrNull() ?: sets },
+                onValueChange = {
+                    if (!it.contains(".") && !it.contains(",")) {
+                        it.toIntOrNull()?.let { it1 -> viewModel.updateSets(it1) } ?: sets
+                    }
+                },
                 label = { Text("Sets") },
                 placeholder = { Text("Enter number of sets") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
                 value = reps.toString(),
-                onValueChange = { reps = it.toIntOrNull() ?: reps },
+                onValueChange = {
+                    if (!it.contains(".") && !it.contains(",")) {
+                        it.toIntOrNull()?.let { it1 -> viewModel.updateReps(it1) } ?: reps
+                    }
+                },
                 label = { Text("Reps") },
                 placeholder = { Text("Enter number of reps") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
                 value = weight.toString(),
-                onValueChange = { weight = it.toFloatOrNull() ?: weight},
+                onValueChange = {
+                    viewModel.updateWeight(it.toFloatOrNull() ?: weight)
+                },
                 label = { Text("Weight") },
                 placeholder = { Text("Enter weight") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
         }
         
         Spacer(modifier = Modifier.padding(8.dp))
         
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            scope.launch { 
+                if (sheetState.isVisible) {
+                    sheetState.hide()
+                    viewModel.addExerciseToList(
+                        Exercise(
+                            name = exerciseName,
+                            sets = sets,
+                            reps = reps,
+                            weight = weight,
+                        )
+                    )
+                }
+            }
+        }) {
             Text(text = "Confirm")
         }
-
     }
 
     if (showColorPicker) {
@@ -271,7 +294,7 @@ fun ColorPickerMenu(
 @Composable
 fun SwipeToDismissItem(
     item: Exercise,
-    itemList: SnapshotStateList<Exercise>,
+    viewModel: TodayScreenViewModel,
     modifier: Modifier = Modifier
 ) {
     var isRemoved by remember { mutableStateOf(false) }
@@ -281,10 +304,9 @@ fun SwipeToDismissItem(
         confirmValueChange = { state ->
             if (state == SwipeToDismissBoxValue.EndToStart) {
                 coroutineScope.launch {
-                    delay(500)
-                    //itemList.remove(item)
+                    delay(300)
+                    viewModel.removeExerciseFromList(item)
                     isRemoved = true
-                    removeItem(item, itemList)
                 }
                 true
             } else false
@@ -357,7 +379,7 @@ fun TodayExerciseRow(exercise: Exercise) {
 @Preview(showBackground = true)
 @Composable
 fun TodayScreenPreview() {
-    TodayScreen()
+    TodayScreen(viewModel = TodayScreenViewModel())
 }
 
 @Preview(showBackground = true)
