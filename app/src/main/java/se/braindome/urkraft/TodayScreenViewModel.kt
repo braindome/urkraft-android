@@ -51,9 +51,14 @@ class TodayScreenViewModel: ViewModel() {
     }
 
     fun addExerciseToList(exercise: Exercise) {
-        val updatedList = _exercises.value.orEmpty().toMutableList()
+        val updatedList = _exercises.value.toMutableList()
         updatedList.add(exercise)
         _exercises.value = updatedList
         Timber.d("Added $exercise to list: $exercises")
+    }
+
+    fun removeExerciseFromList(exercise: Exercise) {
+        val updatedList = _exercises.value.filter { it.id != exercise.id }
+        _exercises.value = updatedList
     }
 }
