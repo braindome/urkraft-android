@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,7 +35,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -58,7 +58,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,7 +69,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import se.braindome.urkraft.model.Exercise
-import se.braindome.urkraft.util.ColorSaver
+import se.braindome.urkraft.utils.ColorSaver
 import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,6 +81,8 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
 
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
+
+    val focusRequester = remember { FocusRequester() }
 
     Surface(
         shadowElevation = 5.dp,
@@ -97,7 +102,7 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
 
                 LazyColumn(
                     state = rememberLazyListState(),
-                    contentPadding = PaddingValues(8.dp),
+                    contentPadding = PaddingValues(bottom = 8.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(exercises, key = { it.id }) { item ->
@@ -105,6 +110,7 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
                             item = item,
                             viewModel = viewModel,
                             modifier = Modifier
+                                .padding(8.dp)
                                 .animateItem(spring(200F))
 
                         )
@@ -117,7 +123,7 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
                     onDismissRequest = { coroutineScope.launch { sheetState.hide() } },
                     sheetState = sheetState,
                 ) {
-                    AddExerciseScreen(viewModel, sheetState)
+                    AddExerciseScreen(viewModel, sheetState, focusRequester)
                 }
             }
             
@@ -135,7 +141,7 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState) {
+fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState, focusRequester: FocusRequester) {
 
     val exerciseName by viewModel.exerciseName.observeAsState("")
     val sets by viewModel.sets.observeAsState(0)
@@ -147,10 +153,16 @@ fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState) {
 
     val scope = rememberCoroutineScope()
 
+    LaunchedEffect(sheetState.isVisible) {
+        if (sheetState.isVisible) focusRequester.requestFocus()
+    }
+
     Column(
         modifier = Modifier
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .focusRequester(focusRequester)
+            .imePadding(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -182,7 +194,9 @@ fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState) {
                 onValueChange = { viewModel.updateExerciseName(it) },
                 label = { Text("Exercise name") },
                 placeholder = { Text("Enter exercise name") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester)
             )
         }
         
@@ -199,7 +213,7 @@ fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState) {
                 label = { Text("Sets") },
                 placeholder = { Text("Enter number of sets") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).focusRequester(focusRequester)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
@@ -212,7 +226,7 @@ fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState) {
                 label = { Text("Reps") },
                 placeholder = { Text("Enter number of reps") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).focusRequester(focusRequester)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
@@ -223,7 +237,7 @@ fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState) {
                 label = { Text("Weight") },
                 placeholder = { Text("Enter weight") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).focusRequester(focusRequester)
             )
         }
         
@@ -239,8 +253,10 @@ fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState) {
                             sets = sets,
                             reps = reps,
                             weight = weight,
+                            color = String.format("#%06X", (0xFFFFFF and exerciseColor.toArgb()))
                         )
                     )
+                    viewModel.resetExerciseValues()
                 }
             }
         }) {
@@ -266,7 +282,7 @@ fun ColorPickerMenu(
     onDismiss: () -> Unit,
     onColorSelected: (Color) -> Unit
 ) {
-    val colors = listOf(Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Cyan, Color.Magenta)
+    val colors = listOf(Color.White, Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Cyan, Color.Magenta)
 
     Column(
         modifier = Modifier
@@ -346,34 +362,60 @@ fun SwipeToDismissItem(
 
 @Composable
 fun TodayExerciseRow(exercise: Exercise) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+
+    var color = Color.White // Default color
+    try {
+        color = Color(android.graphics.Color.parseColor(exercise.color)) // Parse color string
+    } catch (e: IllegalArgumentException) {
+        Timber.tag("TodayExerciseRow").e("Invalid color string: %s", exercise.color)
+    }
+
+    Surface(shadowElevation = 4.dp) {
         Row(
-            //modifier = Modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
         ) {
-            Text(text = exercise.name)
-            Spacer(modifier = Modifier.weight(1f))
-            Text(text = "${exercise.sets}x${exercise.reps}")
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(text = "${exercise.weight} kg")
-        }
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            for (i in 1..exercise.sets) {
-                val checkedState = remember { mutableStateOf(false) }
-                Checkbox(checked = checkedState.value, onCheckedChange = { checkedState.value = it })
+            Surface(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(32.dp),
+                //.border(1.dp, Color.Black),
+                color = color
+            ) {}
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                Row(
+                    modifier = Modifier.padding(start = 14.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = exercise.name)
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(text = "${exercise.sets}x${exercise.reps}")
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(text = "${exercise.weight} kg")
+                }
+                Row(
+                    //modifier = Modifier.padding(4.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    for (i in 1..exercise.sets) {
+                        val checkedState = remember { mutableStateOf(false) }
+                        Checkbox(checked = checkedState.value, onCheckedChange = { checkedState.value = it })
+                    }
+                }
+                //HorizontalDivider(thickness = 2.dp)
             }
         }
-        HorizontalDivider(thickness = 2.dp)
     }
+
+
 }
 
 @Preview(showBackground = true)

@@ -1,4 +1,4 @@
-package se.braindome.urkraft.util
+package se.braindome.urkraft.utils
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf

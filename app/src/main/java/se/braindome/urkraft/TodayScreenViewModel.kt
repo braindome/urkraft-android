@@ -19,20 +19,28 @@ class TodayScreenViewModel: ViewModel() {
     private val _exerciseName = MutableLiveData("")
     val exerciseName: LiveData<String> = _exerciseName
 
-    private val _sets = MutableLiveData(3)
+    private val _sets = MutableLiveData(0)
     val sets: LiveData<Int> = _sets
 
-    private val _reps = MutableLiveData(8)
+    private val _reps = MutableLiveData(0)
     val reps: LiveData<Int> = _reps
 
-    private val _weight = MutableLiveData(60f)
+    private val _weight = MutableLiveData(0f)
     val weight: LiveData<Float> = _weight
 
-    private val _exerciseColor = MutableLiveData(Color.Red)
-    val exerciseColor: LiveData<Color> = _exerciseColor
+    private val _exerciseColor = MutableLiveData("#FFFFFF")
+    val exerciseColor: LiveData<String> = _exerciseColor
 
     private val _showColorPicker = MutableLiveData(false)
     val showColorPicker: LiveData<Boolean> = _showColorPicker
+
+    fun resetExerciseValues() {
+        _exerciseName.value = ""
+        _sets.value = 0
+        _reps.value = 0
+        _weight.value = 0f
+        _exerciseColor.value = "#FFFFFF"
+    }
 
     fun updateExerciseName(name: String) {
         _exerciseName.value = name
@@ -48,6 +56,10 @@ class TodayScreenViewModel: ViewModel() {
 
     fun updateWeight(weight: Float) {
         _weight.value = weight
+    }
+
+    fun updateExerciseColor(color: String) {
+        _exerciseColor.value = color
     }
 
     fun addExerciseToList(exercise: Exercise) {
