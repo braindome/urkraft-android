@@ -52,9 +52,6 @@ android {
 dependencies {
 
     implementation(libs.androidx.runtime.livedata)
-    val lifecycle_version = "2.8.1"
-    val arch_version = "2.2.0"
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -87,5 +84,4 @@ dependencies {
 
     implementation(libs.timber)
     implementation(libs.logger)
-
 }

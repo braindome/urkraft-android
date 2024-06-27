@@ -30,6 +30,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -38,12 +40,14 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -60,8 +64,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,10 +86,64 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
     val exercises by viewModel.exercises.collectAsState()
     Timber.d("Today's exercises: $exercises")
 
-    val sheetState = rememberModalBottomSheetState()
+    var isSheetOpen by rememberSaveable { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    val focusRequester = remember { FocusRequester() }
+
+    BottomSheetScaffold(
+        sheetContent = {
+            AddExerciseScreen(viewModel) {
+                isSheetOpen = false
+            }
+        },
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
+                Text(text = "Today's workout")
+                Spacer(modifier = Modifier.height(8.dp))
+
+                LazyColumn(
+                    state = rememberLazyListState(),
+                    contentPadding = PaddingValues(bottom = 8.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(exercises, key = { it.id }) { item ->
+                        SwipeToDismissItem(
+                            item = item,
+                            viewModel = viewModel,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .animateItem(spring(200F))
+
+                        )
+                    }
+                }
+            }
+
+            /*
+            FloatingActionButton(
+                onClick = {
+                    coroutineScope.launch {
+                        viewModel.resetExerciseValues()
+                        isSheetOpen = true
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add exercise")
+            }
+
+             */
+        }
+    }
+
+    /*
 
     Surface(
         shadowElevation = 5.dp,
@@ -91,7 +152,77 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
             .padding(8.dp)
             .background(MaterialTheme.colorScheme.surface),
     )  {
-        
+
+        BottomSheetScaffold(
+            //scaffoldState = scaffoldState,
+            sheetContent = {
+                //AddExerciseScreen(viewModel, sheetState, focusRequester, scaffoldState)
+                if (isSheetOpen) {
+                    AddExerciseScreen(viewModel, focusRequester) {
+                        isSheetOpen = false
+                    }
+                }
+            },
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    Text(text = "Today's workout")
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LazyColumn(
+                        state = rememberLazyListState(),
+                        contentPadding = PaddingValues(bottom = 8.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(exercises, key = { it.id }) { item ->
+                            SwipeToDismissItem(
+                                item = item,
+                                viewModel = viewModel,
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .animateItem(spring(200F))
+
+                            )
+                        }
+                    }
+                }
+
+                /*
+                if (sheetState.isVisible) {
+                    ModalBottomSheet(
+                        onDismissRequest = { coroutineScope.launch { sheetState.hide() } },
+                        sheetState = sheetState,
+                    ) {
+                        AddExerciseScreen(viewModel, sheetState, focusRequester)
+                    }
+                }
+
+                 */
+
+                FloatingActionButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            viewModel.resetExerciseValues()
+                            //sheetState.show()
+                            isSheetOpen = true
+                            scaffoldState.bottomSheetState.expand()
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Add exercise")
+                }
+            }
+
+        }
+        */
+
+        /*
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
@@ -128,7 +259,12 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
             }
             
             FloatingActionButton(
-                onClick = { coroutineScope.launch { sheetState.show() } },
+                onClick = {
+                    coroutineScope.launch {
+                        viewModel.resetExerciseValues()
+                        sheetState.show()
+                    }
+                },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp)
@@ -136,33 +272,31 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
                 Icon(Icons.Default.Add, contentDescription = "Add exercise")
             }
         }
-    }
+        */
+
+
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState, focusRequester: FocusRequester) {
+fun AddExerciseScreen(
+    viewModel: TodayScreenViewModel,
+    onConfirm: () -> Unit
+)  {
 
     val exerciseName by viewModel.exerciseName.observeAsState("")
-    val sets by viewModel.sets.observeAsState(0)
-    val reps by viewModel.reps.observeAsState(0)
-    val weight by viewModel.weight.observeAsState(0f)
+    val sets by viewModel.sets.observeAsState()
+    val reps by viewModel.reps.observeAsState()
+    val weight by viewModel.weight.observeAsState()
 
     var exerciseColor by rememberSaveable(saver = ColorSaver) { mutableStateOf(Color.Red) } // Default color
     var showColorPicker by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(sheetState.isVisible) {
-        if (sheetState.isVisible) focusRequester.requestFocus()
-    }
-
     Column(
         modifier = Modifier
             .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-            .focusRequester(focusRequester)
-            .imePadding(),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -196,7 +330,6 @@ fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState, f
                 placeholder = { Text("Enter exercise name") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .focusRequester(focusRequester)
             )
         }
         
@@ -213,7 +346,8 @@ fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState, f
                 label = { Text("Sets") },
                 placeholder = { Text("Enter number of sets") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f).focusRequester(focusRequester)
+                modifier = Modifier
+                    .weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
@@ -226,38 +360,37 @@ fun AddExerciseScreen(viewModel: TodayScreenViewModel, sheetState: SheetState, f
                 label = { Text("Reps") },
                 placeholder = { Text("Enter number of reps") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f).focusRequester(focusRequester)
+                modifier = Modifier
+                    .weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
-                value = weight.toString(),
+                value = if (weight == 0f) "" else weight.toString(),
                 onValueChange = {
-                    viewModel.updateWeight(it.toFloatOrNull() ?: weight)
+                    (it.toFloatOrNull() ?: weight)?.let { it1 -> viewModel.updateWeight(it1) }
                 },
                 label = { Text("Weight") },
-                placeholder = { Text("Enter weight") },
+                placeholder = { Text("0") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f).focusRequester(focusRequester)
+                modifier = Modifier
+                    .weight(1f)
             )
         }
         
         Spacer(modifier = Modifier.padding(8.dp))
-        
+
         Button(onClick = {
-            scope.launch { 
-                if (sheetState.isVisible) {
-                    sheetState.hide()
-                    viewModel.addExerciseToList(
-                        Exercise(
-                            name = exerciseName,
-                            sets = sets,
-                            reps = reps,
-                            weight = weight,
-                            color = String.format("#%06X", (0xFFFFFF and exerciseColor.toArgb()))
-                        )
-                    )
-                    viewModel.resetExerciseValues()
-                }
+            scope.launch {
+                val exercise = Exercise(
+                    name = exerciseName,
+                    sets = sets ?: 0,
+                    reps = reps ?: 0,
+                    weight = weight ?: 0f,
+                    color = String.format("#%06X", (0xFFFFFF and exerciseColor.toArgb()))
+                )
+                viewModel.addExerciseToList(exercise)
+                viewModel.resetExerciseValues()
+                onConfirm()
             }
         }) {
             Text(text = "Confirm")
@@ -414,8 +547,20 @@ fun TodayExerciseRow(exercise: Exercise) {
             }
         }
     }
+}
 
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun AddExerciseScreenPreview() {
+    val sheetState = rememberModalBottomSheetState()
+    LaunchedEffect(Unit) {
+        sheetState.show()
+    }
+    AddExerciseScreen(
+        viewModel = TodayScreenViewModel(),
+        onConfirm = {}
+    )
 }
 
 @Preview(showBackground = true)

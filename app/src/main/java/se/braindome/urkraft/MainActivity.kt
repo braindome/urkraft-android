@@ -20,7 +20,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             UrkraftTheme {
                 UrkraftApp()
-                //UrkraftNavHost()
             }
         }
     }
