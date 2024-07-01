@@ -1,5 +1,6 @@
 package se.braindome.urkraft
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -9,15 +10,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun UrkraftBottomAppBar(navController: NavHostController) {
 
-    var selectedItem by rememberSaveable { mutableIntStateOf(getSelectedIndex(navController.currentDestination?.route))}
+    var selectedItem by rememberSaveable {
+        mutableIntStateOf(getSelectedIndex(navController.currentDestination?.route))
+    }
     val navBarIcons = listOf(
         R.drawable.baseline_person_24,
         R.drawable.baseline_home_24,
@@ -25,7 +30,9 @@ fun UrkraftBottomAppBar(navController: NavHostController) {
         R.drawable.baseline_settings_24
     )
 
-    NavigationBar {
+    NavigationBar(
+        modifier = Modifier.height(72.dp)
+    ) {
         navBarIcons.forEachIndexed { index, i ->
             NavigationBarItem(
                 selected = selectedItem == index,

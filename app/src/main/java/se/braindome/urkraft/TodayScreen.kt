@@ -30,6 +30,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Button
@@ -69,6 +70,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -92,10 +94,10 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
 
     BottomSheetScaffold(
         sheetContent = {
-            AddExerciseScreen(viewModel) {
-                isSheetOpen = false
-            }
+            AddExerciseScreen(viewModel) { isSheetOpen = false }
         },
+        sheetPeekHeight = 40.dp,
+        sheetDragHandle = { Icon(painter = painterResource(id = R.drawable.baseline_add_24), contentDescription = null ) }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
 
@@ -138,8 +140,7 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add exercise")
             }
-
-             */
+            */
         }
     }
 
