@@ -10,9 +10,10 @@ activityCompose = "1.9.0"
 composeBom = "2024.05.00"
 logger = "2.2.0"
 material3 = "1.3.0-beta02"
-navigationCompose = "2.8.0-beta02"
+navigationCompose = "2.8.0-beta04"
 runtimeLivedata = "1.6.7"
 timber = "5.0.1"
+serialization = "1.6.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,8 +38,10 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3",
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 logger = { module = "com.orhanobut:logger", version.ref = "logger" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 

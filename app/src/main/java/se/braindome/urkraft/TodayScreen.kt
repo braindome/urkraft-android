@@ -75,6 +75,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import se.braindome.urkraft.model.Exercise
@@ -90,11 +92,16 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
 
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    val navController = rememberNavController()
 
 
     BottomSheetScaffold(
         sheetContent = {
-            AddExerciseScreen(viewModel) { isSheetOpen = false }
+            AddExerciseScreen(
+                viewModel = viewModel,
+                onConfirm = { isSheetOpen = false },
+                navController = navController
+            )
         },
         sheetPeekHeight = 40.dp,
         sheetDragHandle = { Icon(painter = painterResource(id = R.drawable.baseline_add_24), contentDescription = null ) }
@@ -281,7 +288,8 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
 @Composable
 fun AddExerciseScreen(
     viewModel: TodayScreenViewModel,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
+    navController: NavHostController
 )  {
 
     val exerciseName by viewModel.exerciseName.observeAsState("")
@@ -391,7 +399,8 @@ fun AddExerciseScreen(
                 )
                 viewModel.addExerciseToList(exercise)
                 viewModel.resetExerciseValues()
-                onConfirm()
+                //onConfirm()
+                navController.navigateUp()
             }
         }) {
             Text(text = "Confirm")
@@ -560,7 +569,8 @@ fun AddExerciseScreenPreview() {
     }
     AddExerciseScreen(
         viewModel = TodayScreenViewModel(),
-        onConfirm = {}
+        onConfirm = {},
+        navController = rememberNavController()
     )
 }
 

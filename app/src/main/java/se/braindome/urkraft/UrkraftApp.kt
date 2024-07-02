@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.serialization.Serializable
 import se.braindome.urkraft.model.Repository
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,9 +51,21 @@ fun UrkraftApp() {
             UrkraftBottomAppBar(navController)
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) {
             NavHost(navController = navController, startDestination = "home") {
-                composable(UrkraftRoutes.TODAY.route) { TodayScreen(currentWorkoutViewModel) }
+                composable(UrkraftRoutes.TODAY.route) {
+                    //TodayScreen(currentWorkoutViewModel)
+                    CurrentWorkoutScreen(currentWorkoutViewModel, navController)
+                }
+                composable(UrkraftRoutes.ADD_EXERCISE.route) {
+                    AddExerciseScreen(
+                        currentWorkoutViewModel,
+                        {},
+                        navController,
+                    )
+                }
                 composable(UrkraftRoutes.HOME.route) { HomeScreen() }
                 composable(UrkraftRoutes.PROFILE.route) { ProfileScreen() }
                 composable(UrkraftRoutes.SETTINGS.route) { SettingsScreen() }
