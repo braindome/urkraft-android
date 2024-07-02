@@ -90,8 +90,8 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
     val exercises by viewModel.exercises.collectAsState()
     Timber.d("Today's exercises: $exercises")
 
-    var isSheetOpen by rememberSaveable { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
+    //var isSheetOpen by rememberSaveable { mutableStateOf(false) }
+    //val coroutineScope = rememberCoroutineScope()
     val navController = rememberNavController()
 
 
@@ -99,7 +99,7 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
         sheetContent = {
             AddExerciseScreen(
                 viewModel = viewModel,
-                onConfirm = { isSheetOpen = false },
+                //onConfirm = { isSheetOpen = false },
                 navController = navController
             )
         },
@@ -288,7 +288,7 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
 @Composable
 fun AddExerciseScreen(
     viewModel: TodayScreenViewModel,
-    onConfirm: () -> Unit,
+    //onConfirm: () -> Unit,
     navController: NavHostController
 )  {
 
@@ -569,7 +569,7 @@ fun AddExerciseScreenPreview() {
     }
     AddExerciseScreen(
         viewModel = TodayScreenViewModel(),
-        onConfirm = {},
+        //onConfirm = {},
         navController = rememberNavController()
     )
 }

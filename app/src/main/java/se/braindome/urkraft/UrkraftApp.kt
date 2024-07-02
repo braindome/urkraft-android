@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,7 +46,12 @@ fun UrkraftApp() {
         topBar = {
             TopAppBar(
                 title = { Text("Week 666") },
-                actions = { /* TODO */ }
+                actions = { /* TODO */ },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Edit")
+                    }
+                }
             )
         },
         bottomBar = {
@@ -62,7 +69,6 @@ fun UrkraftApp() {
                 composable(UrkraftRoutes.ADD_EXERCISE.route) {
                     AddExerciseScreen(
                         currentWorkoutViewModel,
-                        {},
                         navController,
                     )
                 }
