@@ -18,37 +18,28 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetDefaults
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -63,18 +54,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import se.braindome.urkraft.model.Exercise
@@ -88,13 +76,18 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
     val exercises by viewModel.exercises.collectAsState()
     Timber.d("Today's exercises: $exercises")
 
-    var isSheetOpen by rememberSaveable { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
+    //var isSheetOpen by rememberSaveable { mutableStateOf(false) }
+    //val coroutineScope = rememberCoroutineScope()
+    val navController = rememberNavController()
 
 
     BottomSheetScaffold(
         sheetContent = {
-            AddExerciseScreen(viewModel) { isSheetOpen = false }
+            AddExerciseScreen(
+                viewModel = viewModel,
+                //onConfirm = { isSheetOpen = false },
+                navController = navController
+            )
         },
         sheetPeekHeight = 40.dp,
         sheetDragHandle = { Icon(painter = painterResource(id = R.drawable.baseline_add_24), contentDescription = null ) }
@@ -281,7 +274,8 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
 @Composable
 fun AddExerciseScreen(
     viewModel: TodayScreenViewModel,
-    onConfirm: () -> Unit
+    //onConfirm: () -> Unit,
+    navController: NavHostController
 )  {
 
     val exerciseName by viewModel.exerciseName.observeAsState("")
@@ -391,7 +385,8 @@ fun AddExerciseScreen(
                 )
                 viewModel.addExerciseToList(exercise)
                 viewModel.resetExerciseValues()
-                onConfirm()
+                //onConfirm()
+                navController.navigateUp()
             }
         }) {
             Text(text = "Confirm")
@@ -534,12 +529,12 @@ fun TodayExerciseRow(exercise: Exercise) {
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(text = "${exercise.weight} kg")
                 }
-                Row(
-                    //modifier = Modifier.padding(4.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy((-16).dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(start = 1.dp, end = 1.dp)
                 ) {
-                    for (i in 1..exercise.sets) {
+                    items(exercise.sets) {
                         val checkedState = remember { mutableStateOf(false) }
                         Checkbox(checked = checkedState.value, onCheckedChange = { checkedState.value = it })
                     }
@@ -560,7 +555,8 @@ fun AddExerciseScreenPreview() {
     }
     AddExerciseScreen(
         viewModel = TodayScreenViewModel(),
-        onConfirm = {}
+        //onConfirm = {},
+        navController = rememberNavController()
     )
 }
 

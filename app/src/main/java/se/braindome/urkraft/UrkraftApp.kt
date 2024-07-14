@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.serialization.Serializable
 import se.braindome.urkraft.model.Repository
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,16 +46,32 @@ fun UrkraftApp() {
         topBar = {
             TopAppBar(
                 title = { Text("Week 666") },
-                actions = { /* TODO */ }
+                actions = { /* TODO */ },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Edit")
+                    }
+                }
             )
         },
         bottomBar = {
             UrkraftBottomAppBar(navController)
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) {
             NavHost(navController = navController, startDestination = "home") {
-                composable(UrkraftRoutes.TODAY.route) { TodayScreen(currentWorkoutViewModel) }
+                composable(UrkraftRoutes.TODAY.route) {
+                    //TodayScreen(currentWorkoutViewModel)
+                    CurrentWorkoutScreen(currentWorkoutViewModel, navController)
+                }
+                composable(UrkraftRoutes.ADD_EXERCISE.route) {
+                    AddExerciseScreen(
+                        currentWorkoutViewModel,
+                        navController,
+                    )
+                }
                 composable(UrkraftRoutes.HOME.route) { HomeScreen() }
                 composable(UrkraftRoutes.PROFILE.route) { ProfileScreen() }
                 composable(UrkraftRoutes.SETTINGS.route) { SettingsScreen() }
