@@ -1,6 +1,5 @@
-package se.braindome.urkraft
+package se.braindome.urkraft.ui.workout
 
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

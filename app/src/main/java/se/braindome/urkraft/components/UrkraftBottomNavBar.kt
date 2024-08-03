@@ -1,7 +1,6 @@
-package se.braindome.urkraft
+package se.braindome.urkraft.components
 
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -16,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import se.braindome.urkraft.R
+import se.braindome.urkraft.UrkraftRoutes
 
 @Composable
 fun UrkraftBottomAppBar(navController: NavHostController) {

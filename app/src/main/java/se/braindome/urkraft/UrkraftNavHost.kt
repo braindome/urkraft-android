@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import se.braindome.urkraft.ui.profile.ProfileScreen
+import se.braindome.urkraft.ui.settings.SettingsScreen
+import se.braindome.urkraft.ui.workout.CurrentWorkoutScreen
+import se.braindome.urkraft.ui.workout.TodayScreenViewModel
 
 @Composable
 fun UrkraftNavHost() {

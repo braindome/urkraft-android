@@ -7,6 +7,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import se.braindome.urkraft.model.Exercise
+import se.braindome.urkraft.ui.workout.AddExerciseDialog
 
 @RunWith(AndroidJUnit4::class)
 class AddExerciseDialogUITest {

@@ -1,4 +1,4 @@
-package se.braindome.urkraft
+package se.braindome.urkraft.ui.workout
 
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
@@ -24,12 +24,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import se.braindome.urkraft.R
+import se.braindome.urkraft.UrkraftRoutes
 
 @Composable
 fun CurrentWorkoutScreen(
