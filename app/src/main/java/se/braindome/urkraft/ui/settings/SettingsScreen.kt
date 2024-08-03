@@ -1,4 +1,4 @@
-package se.braindome.urkraft
+package se.braindome.urkraft.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
