@@ -23,14 +23,14 @@ import se.braindome.urkraft.ui.profile.ProfileScreen
 import se.braindome.urkraft.ui.settings.SettingsScreen
 import se.braindome.urkraft.ui.workout.AddExerciseScreen
 import se.braindome.urkraft.ui.workout.CurrentWorkoutScreen
-import se.braindome.urkraft.ui.workout.TodayScreenViewModel
+import se.braindome.urkraft.ui.workout.CurrentWorkoutViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UrkraftApp() {
 
     val navController = rememberNavController()
-    val currentWorkoutViewModel = TodayScreenViewModel()
+    val currentWorkoutViewModel = CurrentWorkoutViewModel()
 
     Scaffold(
         topBar = {

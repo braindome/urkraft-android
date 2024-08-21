@@ -27,13 +27,11 @@ import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayScreen(viewModel: TodayScreenViewModel) {
+fun TodayScreen(viewModel: CurrentWorkoutViewModel) {
 
     val exercises by viewModel.exercises.collectAsState()
     Timber.d("Today's exercises: $exercises")
 
-    //var isSheetOpen by rememberSaveable { mutableStateOf(false) }
-    //val coroutineScope = rememberCoroutineScope()
     val navController = rememberNavController()
 
 
@@ -75,155 +73,8 @@ fun TodayScreen(viewModel: TodayScreenViewModel) {
                 }
             }
 
-            /*
-            FloatingActionButton(
-                onClick = {
-                    coroutineScope.launch {
-                        viewModel.resetExerciseValues()
-                        isSheetOpen = true
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add exercise")
-            }
-            */
         }
     }
-
-    /*
-
-    Surface(
-        shadowElevation = 5.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .background(MaterialTheme.colorScheme.surface),
-    )  {
-
-        BottomSheetScaffold(
-            //scaffoldState = scaffoldState,
-            sheetContent = {
-                //AddExerciseScreen(viewModel, sheetState, focusRequester, scaffoldState)
-                if (isSheetOpen) {
-                    AddExerciseScreen(viewModel, focusRequester) {
-                        isSheetOpen = false
-                    }
-                }
-            },
-        ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                ) {
-                    Text(text = "Today's workout")
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    LazyColumn(
-                        state = rememberLazyListState(),
-                        contentPadding = PaddingValues(bottom = 8.dp),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(exercises, key = { it.id }) { item ->
-                            SwipeToDismissItem(
-                                item = item,
-                                viewModel = viewModel,
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .animateItem(spring(200F))
-
-                            )
-                        }
-                    }
-                }
-
-                /*
-                if (sheetState.isVisible) {
-                    ModalBottomSheet(
-                        onDismissRequest = { coroutineScope.launch { sheetState.hide() } },
-                        sheetState = sheetState,
-                    ) {
-                        AddExerciseScreen(viewModel, sheetState, focusRequester)
-                    }
-                }
-
-                 */
-
-                FloatingActionButton(
-                    onClick = {
-                        coroutineScope.launch {
-                            viewModel.resetExerciseValues()
-                            //sheetState.show()
-                            isSheetOpen = true
-                            scaffoldState.bottomSheetState.expand()
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(16.dp)
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add exercise")
-                }
-            }
-
-        }
-        */
-
-        /*
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-            ) {
-                Text(text = "Today's workout")
-                Spacer(modifier = Modifier.height(8.dp))
-
-                LazyColumn(
-                    state = rememberLazyListState(),
-                    contentPadding = PaddingValues(bottom = 8.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(exercises, key = { it.id }) { item ->
-                        SwipeToDismissItem(
-                            item = item,
-                            viewModel = viewModel,
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .animateItem(spring(200F))
-
-                        )
-                    }
-                }
-            }
-            
-            if (sheetState.isVisible) {
-                ModalBottomSheet(
-                    onDismissRequest = { coroutineScope.launch { sheetState.hide() } },
-                    sheetState = sheetState,
-                ) {
-                    AddExerciseScreen(viewModel, sheetState, focusRequester)
-                }
-            }
-            
-            FloatingActionButton(
-                onClick = {
-                    coroutineScope.launch {
-                        viewModel.resetExerciseValues()
-                        sheetState.show()
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add exercise")
-            }
-        }
-        */
-
 
 }
 

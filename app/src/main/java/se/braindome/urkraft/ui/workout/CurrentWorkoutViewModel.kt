@@ -5,60 +5,53 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import se.braindome.urkraft.model.Exercise
 import timber.log.Timber
 
-class TodayScreenViewModel: ViewModel() {
+data class WorkoutUiState(
+    val exerciseName: String = "",
+    val sets: Int = 0,
+    val reps: Int = 0,
+    val weight: Float = 0f,
+    val exerciseColor: String = "#FFFFFF",
+    val showColorPicker: Boolean = false
+)
+
+class CurrentWorkoutViewModel: ViewModel() {
     // private val _exercises = MutableLiveData<List<Exercise>>(emptyList())
     // val exercises: LiveData<List<Exercise>> = _exercises
+
+    private val _uiState = MutableStateFlow(WorkoutUiState())
+    val uiState: StateFlow<WorkoutUiState> = _uiState.asStateFlow()
 
     private val _exercises = MutableStateFlow<List<Exercise>>(emptyList())
     val exercises: StateFlow<List<Exercise>> = _exercises
 
-    private val _exerciseName = MutableLiveData("")
-    val exerciseName: LiveData<String> = _exerciseName
 
-    private val _sets = MutableLiveData(0)
-    val sets: LiveData<Int> = _sets
-
-    private val _reps = MutableLiveData(0)
-    val reps: LiveData<Int> = _reps
-
-    private val _weight = MutableLiveData(0f)
-    val weight: LiveData<Float> = _weight
-
-    private val _exerciseColor = MutableLiveData("#FFFFFF")
-    val exerciseColor: LiveData<String> = _exerciseColor
-
-    private val _showColorPicker = MutableLiveData(false)
-    val showColorPicker: LiveData<Boolean> = _showColorPicker
 
     fun resetExerciseValues() {
-        _exerciseName.value = ""
-        _sets.value = 0
-        _reps.value = 0
-        _weight.value = 0f
-        _exerciseColor.value = "#FFFFFF"
+        _uiState.value = WorkoutUiState()
     }
 
     fun updateExerciseName(name: String) {
-        _exerciseName.value = name
+        _uiState.value = _uiState.value.copy(exerciseName = name)
     }
 
     fun updateSets(sets: Int) {
-        _sets.value = sets
+        _uiState.value = _uiState.value.copy(sets = sets)
     }
 
     fun updateReps(reps: Int) {
-        _reps.value = reps
+        _uiState.value = _uiState.value.copy(reps = reps)
     }
 
     fun updateWeight(weight: Float) {
-        _weight.value = weight
+        _uiState.value = _uiState.value.copy(weight = weight)
     }
 
     fun updateExerciseColor(color: String) {
-        _exerciseColor.value = color
+        _uiState.value = _uiState.value.copy(exerciseColor = color)
     }
 
     fun addExerciseToList(exercise: Exercise) {
