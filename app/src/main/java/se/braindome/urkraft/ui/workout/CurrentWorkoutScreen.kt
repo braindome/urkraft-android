@@ -34,7 +34,7 @@ import se.braindome.urkraft.UrkraftRoutes
 
 @Composable
 fun CurrentWorkoutScreen(
-    viewModel: TodayScreenViewModel,
+    viewModel: CurrentWorkoutViewModel,
     navController: NavHostController
 ) {
     val exercises by viewModel.exercises.collectAsState()
@@ -90,7 +90,7 @@ fun CurrentWorkoutScreen(
 @Composable
 fun CurrentWorkoutScreenPreview() {
     CurrentWorkoutScreen(
-        viewModel = TodayScreenViewModel(),
+        viewModel = CurrentWorkoutViewModel(),
         navController = rememberNavController()
     )
 }

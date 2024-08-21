@@ -37,6 +37,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +47,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
@@ -62,19 +66,14 @@ import timber.log.Timber
 
 @Composable
 fun AddExerciseScreen(
-    viewModel: TodayScreenViewModel,
+    viewModel: CurrentWorkoutViewModel,
     //onConfirm: () -> Unit,
     navController: NavHostController
 )  {
 
-    val exerciseName by viewModel.exerciseName.observeAsState("")
-    val sets by viewModel.sets.observeAsState()
-    val reps by viewModel.reps.observeAsState()
-    val weight by viewModel.weight.observeAsState()
-
+    val uiState by viewModel.uiState.collectAsState()
     var exerciseColor by rememberSaveable(saver = ColorSaver) { mutableStateOf(Color.Red) } // Default color
     var showColorPicker by remember { mutableStateOf(false) }
-
     val scope = rememberCoroutineScope()
 
     Column(
@@ -108,7 +107,7 @@ fun AddExerciseScreen(
                 color = exerciseColor
             ) { }
             TextField(
-                value = exerciseName,
+                value = uiState.exerciseName,
                 onValueChange = { viewModel.updateExerciseName(it) },
                 label = { Text("Exercise name") },
                 placeholder = { Text("Enter exercise name") },
@@ -122,7 +121,7 @@ fun AddExerciseScreen(
         Row {
             TextField(
                 //value = sets?.toString() ?: "",
-                value = sets?.takeIf { it != 0 }?.toString() ?: "",
+                value = uiState.sets.takeIf { it != 0 }?.toString() ?: "",
                 onValueChange = {
                     if (!it.contains(".") && !it.contains(",")) {
                         it.toIntOrNull()?.let { it1 -> viewModel.updateSets(it1) }
@@ -137,7 +136,7 @@ fun AddExerciseScreen(
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
                 //value = reps?.toString() ?: "",
-                value = reps?.takeIf { it != 0 }?.toString() ?: "",
+                value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
                 onValueChange = {
                     if (!it.contains(".") && !it.contains(",")) {
                         it.toIntOrNull()?.let { it1 -> viewModel.updateReps(it1) }
@@ -153,7 +152,7 @@ fun AddExerciseScreen(
             TextField(
                 //value = if (weight == 0f) "" else weight.toString(),
                 //value = weight?.takeIf { it != 0f }?.toString() ?: "",
-                value = weight?.takeIf { it != 0f }?.let { if (it % 1 == 0f) it.toString() else it.toString() } ?: "",
+                value = uiState.weight.takeIf { it != 0f }?.let { if (it % 1 == 0f) it.toString() else it.toString() } ?: "",
                 onValueChange = {
                     //(it.toFloatOrNull() ?: weight)?.let { it1 -> viewModel.updateWeight(it1) }
                     it.replace(",", ".").toFloatOrNull()?.let { it1 -> viewModel.updateWeight(it1) }
@@ -170,10 +169,10 @@ fun AddExerciseScreen(
         Button(onClick = {
             scope.launch {
                 val exercise = Exercise(
-                    name = exerciseName,
-                    sets = sets ?: 0,
-                    reps = reps ?: 0,
-                    weight = weight ?: 0f,
+                    name = uiState.exerciseName,
+                    sets = uiState.sets ?: 0,
+                    reps = uiState.reps ?: 0,
+                    weight = uiState.weight ?: 0f,
                     color = String.format("#%06X", (0xFFFFFF and exerciseColor.toArgb()))
                 )
                 viewModel.addExerciseToList(exercise)
@@ -232,7 +231,7 @@ fun ColorPickerMenu(
 @Composable
 fun SwipeToDismissItem(
     item: Exercise,
-    viewModel: TodayScreenViewModel,
+    viewModel: CurrentWorkoutViewModel,
     modifier: Modifier = Modifier
 ) {
     var isRemoved by remember { mutableStateOf(false) }
@@ -347,7 +346,7 @@ fun AddExerciseScreenPreview() {
         sheetState.show()
     }
     AddExerciseScreen(
-        viewModel = TodayScreenViewModel(),
+        viewModel = CurrentWorkoutViewModel(),
         //onConfirm = {},
         navController = rememberNavController()
     )
@@ -356,7 +355,7 @@ fun AddExerciseScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun TodayScreenPreview() {
-    TodayScreen(viewModel = TodayScreenViewModel())
+    TodayScreen(viewModel = CurrentWorkoutViewModel())
 }
 
 @Preview(showBackground = true)

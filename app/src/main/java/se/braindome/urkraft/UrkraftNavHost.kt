@@ -7,7 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import se.braindome.urkraft.ui.profile.ProfileScreen
 import se.braindome.urkraft.ui.settings.SettingsScreen
 import se.braindome.urkraft.ui.workout.CurrentWorkoutScreen
-import se.braindome.urkraft.ui.workout.TodayScreenViewModel
+import se.braindome.urkraft.ui.workout.CurrentWorkoutViewModel
 
 @Composable
 fun UrkraftNavHost() {
@@ -16,7 +16,7 @@ fun UrkraftNavHost() {
     NavHost(navController = navController, startDestination = "home") {
         composable(UrkraftRoutes.TODAY.route) {
             // TodayScreen(TodayScreenViewModel())
-            CurrentWorkoutScreen(TodayScreenViewModel(), navController)
+            CurrentWorkoutScreen(CurrentWorkoutViewModel(), navController)
         }
         composable(UrkraftRoutes.HOME.route) { UrkraftApp() }
         composable(UrkraftRoutes.PROFILE.route) { ProfileScreen() }
