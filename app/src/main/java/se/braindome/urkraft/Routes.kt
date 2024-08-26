@@ -5,5 +5,4 @@ enum class UrkraftRoutes(val route: String) {
     PROFILE("profile"),
     SETTINGS("settings"),
     PLANNING("planning"),
-    ADD_EXERCISE("add_exercise")
 }

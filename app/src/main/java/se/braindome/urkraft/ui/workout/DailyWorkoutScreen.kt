@@ -71,7 +71,10 @@ fun DailyWorkoutScreen(
                 coroutineScope.launch {
                     viewModel.resetExerciseValues()
                     isAddExerciseScreenOpen = true
-                    navController.navigate(UrkraftRoutes.ADD_EXERCISE.route)
+                    navController.navigate(
+                        //UrkraftRoutes.ADD_EXERCISE.route
+                        PlanningScreenRoutes.NewExercise.route
+                    )
                 }
             },
             modifier = Modifier

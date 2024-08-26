@@ -7,6 +7,7 @@ import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,6 +24,7 @@ sealed class PlanningScreenRoutes(val route: String) {
     data object Daily : PlanningScreenRoutes("daily")
     data object Weekly : PlanningScreenRoutes("weekly")
     data object Monthly : PlanningScreenRoutes("monthly")
+    data object NewExercise : PlanningScreenRoutes("new_exercise")
 }
 
 @Composable
@@ -47,6 +49,9 @@ fun PlanningNav() {
             }
             composable(PlanningScreenRoutes.Monthly.route) {
                 MonthlyPlanningScreen()
+            }
+            composable(PlanningScreenRoutes.NewExercise.route) {
+                AddExerciseScreen(dailyPlanningViewModel, navController)
             }
         }
     }
