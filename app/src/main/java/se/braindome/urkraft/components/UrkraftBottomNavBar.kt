@@ -25,9 +25,9 @@ fun UrkraftBottomAppBar(navController: NavHostController) {
         mutableIntStateOf(getSelectedIndex(navController.currentDestination?.route))
     }
     val navBarIcons = listOf(
-        R.drawable.baseline_person_24,
-        R.drawable.baseline_home_24,
-        R.drawable.baseline_today_24,
+        R.drawable.baseline_dashboard_24,
+        R.drawable.baseline_timer_24,
+        R.drawable.baseline_fitness_center_24,
         R.drawable.baseline_settings_24
     )
 
@@ -40,9 +40,9 @@ fun UrkraftBottomAppBar(navController: NavHostController) {
                 onClick = {
                      selectedItem = index
                     val destination = when (index) {
-                        0 -> UrkraftRoutes.PROFILE.route
-                        1 -> UrkraftRoutes.HOME.route
-                        2 -> UrkraftRoutes.TODAY.route
+                        0 -> UrkraftRoutes.DASHBOARD.route
+                        1 -> UrkraftRoutes.PROFILE.route
+                        2 -> UrkraftRoutes.PLANNING.route
                         3 -> UrkraftRoutes.SETTINGS.route
                         else -> "home"
                     }
@@ -62,8 +62,8 @@ fun UrkraftBottomAppBar(navController: NavHostController) {
 fun getSelectedIndex(route: String?): Int {
     return when (route) {
         UrkraftRoutes.PROFILE.route -> 0
-        UrkraftRoutes.HOME.route -> 1
-        UrkraftRoutes.TODAY.route -> 2
+        UrkraftRoutes.DASHBOARD.route -> 1
+        UrkraftRoutes.PLANNING.route -> 2
         UrkraftRoutes.SETTINGS.route -> 3
         else -> 0
     }
