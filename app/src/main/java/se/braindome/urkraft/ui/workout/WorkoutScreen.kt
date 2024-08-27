@@ -44,6 +44,14 @@ import se.braindome.urkraft.model.Exercise
 import se.braindome.urkraft.model.Repository
 import se.braindome.urkraft.model.Workout
 
+
+/**
+ *
+ * UNUSED
+ *
+ */
+
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutScreen() {
@@ -275,3 +283,5 @@ fun ExerciseRowPreview() {
         completedSets = remember { mutableStateOf(List(3) { false }) }
     )
 }
+
+ */

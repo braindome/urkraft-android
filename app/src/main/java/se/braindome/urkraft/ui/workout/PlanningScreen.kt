@@ -7,7 +7,6 @@ import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,7 +27,7 @@ sealed class PlanningScreenRoutes(val route: String) {
 }
 
 @Composable
-fun PlanningNav() {
+fun PlanningScreen() {
     val navController = rememberNavController()
     val dailyPlanningViewModel: DailyPlanningViewModel = viewModel()
     Scaffold(
