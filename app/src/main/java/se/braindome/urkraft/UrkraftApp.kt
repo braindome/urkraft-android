@@ -21,16 +21,14 @@ import se.braindome.urkraft.components.UrkraftBottomAppBar
 import se.braindome.urkraft.ui.home.HomeScreen
 import se.braindome.urkraft.ui.profile.ProfileScreen
 import se.braindome.urkraft.ui.settings.SettingsScreen
-import se.braindome.urkraft.ui.workout.AddExerciseScreen
-import se.braindome.urkraft.ui.workout.CurrentWorkoutScreen
-import se.braindome.urkraft.ui.workout.CurrentWorkoutViewModel
+import se.braindome.urkraft.ui.workout.DailyPlanningViewModel
+import se.braindome.urkraft.ui.workout.PlanningScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UrkraftApp() {
 
     val navController = rememberNavController()
-    val currentWorkoutViewModel = CurrentWorkoutViewModel()
 
     Scaffold(
         topBar = {
@@ -52,17 +50,8 @@ fun UrkraftApp() {
             .fillMaxSize()
             .padding(paddingValues)) {
             NavHost(navController = navController, startDestination = "home") {
-                composable(UrkraftRoutes.TODAY.route) {
-                    //TodayScreen(currentWorkoutViewModel)
-                    CurrentWorkoutScreen(currentWorkoutViewModel, navController)
-                }
-                composable(UrkraftRoutes.ADD_EXERCISE.route) {
-                    AddExerciseScreen(
-                        currentWorkoutViewModel,
-                        navController,
-                    )
-                }
-                composable(UrkraftRoutes.HOME.route) { HomeScreen() }
+                composable(UrkraftRoutes.PLANNING.route) { PlanningScreen() }
+                composable(UrkraftRoutes.DASHBOARD.route) { HomeScreen() }
                 composable(UrkraftRoutes.PROFILE.route) { ProfileScreen() }
                 composable(UrkraftRoutes.SETTINGS.route) { SettingsScreen() }
 

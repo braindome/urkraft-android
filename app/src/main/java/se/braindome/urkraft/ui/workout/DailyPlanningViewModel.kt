@@ -1,7 +1,5 @@
 package se.braindome.urkraft.ui.workout
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +16,7 @@ data class WorkoutUiState(
     val showColorPicker: Boolean = false
 )
 
-class CurrentWorkoutViewModel: ViewModel() {
+class DailyPlanningViewModel: ViewModel() {
     // private val _exercises = MutableLiveData<List<Exercise>>(emptyList())
     // val exercises: LiveData<List<Exercise>> = _exercises
 

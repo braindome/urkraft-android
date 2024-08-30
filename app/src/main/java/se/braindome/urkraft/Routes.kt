@@ -1,9 +1,8 @@
 package se.braindome.urkraft
 
 enum class UrkraftRoutes(val route: String) {
-    HOME("home"),
+    DASHBOARD("home"),
     PROFILE("profile"),
     SETTINGS("settings"),
-    TODAY("today"),
-    ADD_EXERCISE("add_exercise")
+    PLANNING("planning"),
 }

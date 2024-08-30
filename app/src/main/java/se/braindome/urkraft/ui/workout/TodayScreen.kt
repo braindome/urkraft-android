@@ -27,7 +27,7 @@ import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayScreen(viewModel: CurrentWorkoutViewModel) {
+fun TodayScreen(viewModel: DailyPlanningViewModel) {
 
     val exercises by viewModel.exercises.collectAsState()
     Timber.d("Today's exercises: $exercises")

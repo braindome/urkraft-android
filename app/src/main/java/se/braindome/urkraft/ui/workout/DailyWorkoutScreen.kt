@@ -33,8 +33,8 @@ import se.braindome.urkraft.R
 import se.braindome.urkraft.UrkraftRoutes
 
 @Composable
-fun CurrentWorkoutScreen(
-    viewModel: CurrentWorkoutViewModel,
+fun DailyWorkoutScreen(
+    viewModel: DailyPlanningViewModel,
     navController: NavHostController
 ) {
     val exercises by viewModel.exercises.collectAsState()
@@ -71,7 +71,10 @@ fun CurrentWorkoutScreen(
                 coroutineScope.launch {
                     viewModel.resetExerciseValues()
                     isAddExerciseScreenOpen = true
-                    navController.navigate(UrkraftRoutes.ADD_EXERCISE.route)
+                    navController.navigate(
+                        //UrkraftRoutes.ADD_EXERCISE.route
+                        PlanningScreenRoutes.NewExercise.route
+                    )
                 }
             },
             modifier = Modifier
@@ -89,8 +92,8 @@ fun CurrentWorkoutScreen(
 @Preview(showBackground = true)
 @Composable
 fun CurrentWorkoutScreenPreview() {
-    CurrentWorkoutScreen(
-        viewModel = CurrentWorkoutViewModel(),
+    DailyWorkoutScreen(
+        viewModel = DailyPlanningViewModel(),
         navController = rememberNavController()
     )
 }
