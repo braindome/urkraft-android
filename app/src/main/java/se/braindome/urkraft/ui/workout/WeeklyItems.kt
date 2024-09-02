@@ -25,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import se.braindome.urkraft.model.Repository
 
 @Composable
 fun WeeklyCard() {
@@ -64,11 +66,8 @@ fun WeeklyCard() {
                     HorizontalDivider(
                         modifier = Modifier
                             .height(1.dp)
-                            .padding(
-                                top = 16.dp,
-                                start = 32.dp,
-                                end = 16.dp
-                            )
+                            .padding(start = 32.dp, end = 16.dp),
+                        color = Color.Black
                     )
                 }
 
@@ -100,6 +99,44 @@ fun WeeklyCardItem() {
 
         )
     }
+}
+
+@Composable
+fun WorkoutDialog() {
+    val mockWorkout = Repository.getWorkouts()[0]
+    Dialog(
+        onDismissRequest = { /*TODO*/ },
+    ) {
+        Box(
+            modifier = Modifier
+                .size(200.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.White)
+                .padding(8.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Weekday", fontSize = 16.sp)
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    mockWorkout.exercises.forEach { exercise ->
+                        Text(text = exercise.name, fontSize = 12.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun WorkoutDialogPreview() {
+    WorkoutDialog()
 }
 
 @Preview(showBackground = true)
