@@ -32,7 +32,7 @@ fun UrkraftBottomAppBar(navController: NavHostController) {
     )
 
     NavigationBar(
-        modifier = Modifier.height(72.dp)
+        //modifier = Modifier.height(72.dp)
     ) {
         navBarIcons.forEachIndexed { index, i ->
             NavigationBarItem(
