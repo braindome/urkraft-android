@@ -16,6 +16,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -33,14 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.braindome.urkraft.model.Repository
+import se.braindome.urkraft.ui.theme.Purple40
+import se.braindome.urkraft.ui.theme.UrkraftTheme
 
 @Composable
 fun WeeklyCard(weekNumber: Int) {
     val weekDays = listOf("M", "T", "W", "T", "F", "S", "S")
-    val weekNumbers = listOf(21, 22, 23, 24)
     ElevatedCard(
         colors = CardColors(
-            containerColor = Color.LightGray,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = Color.Black,
             disabledContentColor = Color.White,
             disabledContainerColor = Color.White
@@ -65,7 +67,7 @@ fun WeeklyCard(weekNumber: Int) {
             weekDays.forEach { day ->
                 Column(
                     modifier = Modifier
-                        .height(64.dp)
+                        .height(56.dp)
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.Start,
@@ -83,7 +85,7 @@ fun WeeklyCard(weekNumber: Int) {
                     HorizontalDivider(
                         modifier = Modifier
                             .height(1.dp)
-                            .padding(start = 32.dp, end = 16.dp),
+                            .padding(start = 32.dp, end = 8.dp),
                         color = Color.Black
                     )
                 }
@@ -103,16 +105,16 @@ fun WeeklyCardItem() {
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            //.background(Color.Yellow)
             .height(56.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
     ) {
         Text(
             lineHeight = 32.sp,
             text = "This is a workout",
             modifier = Modifier
                 .shadow(1.dp, RoundedCornerShape(15.dp))
-                .background(Color.Cyan)
+                .background(MaterialTheme.colorScheme.surfaceContainer)
                 .fillMaxWidth()
                 .height(32.dp)
                 .clickable { showDialog = true }
@@ -130,17 +132,19 @@ fun WorkoutDialog(onDismissRequest: () -> Unit = {}) {
     ) {
         Card(
             modifier = Modifier
-                .size(250.dp)
                 .clip(RoundedCornerShape(8.dp))
-                //.background(Color.White)
+                .size(250.dp)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(8.dp)
+
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp)
+                    //.padding(8.dp)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Text(text = "Weekday", fontSize = 16.sp)
                 Column(
