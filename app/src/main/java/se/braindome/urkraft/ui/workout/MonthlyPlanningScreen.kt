@@ -30,7 +30,7 @@ fun MonthlyPlanningScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             MonthSelectorBar()
-            Calendar()
+            GridCalendar()
 
         }
     }

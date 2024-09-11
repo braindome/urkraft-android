@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,7 +37,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GridCalendar() {
     val currentDate = remember { mutableStateOf(Date()) }
@@ -45,9 +45,9 @@ fun GridCalendar() {
 
     Timber.tag("Days in month").d(daysInCurrentMonth.toString())
     Column(
-        modifier = Modifier
-            .size(550.dp)
-            .padding(end = 16.dp, start = 16.dp),
+        modifier = Modifier.fillMaxSize(),
+            //.size(550.dp),
+            //.padding(end = 16.dp, start = 16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -109,7 +109,7 @@ fun MonthNavigation(
 fun WeekDaysRow() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
@@ -119,7 +119,7 @@ fun WeekDaysRow() {
             Text(
                 text = day,
                 style = MaterialTheme.typography.labelLarge,
-                fontSize = 18.sp,
+                fontSize = 14.sp,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
@@ -131,10 +131,10 @@ fun WeekDaysRow() {
 fun WeekRow(week: CalenderRepository.Week) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            //.padding(end = 4.dp, start = 4.dp)
     ) {
         WeekNumberCell(weekNumber = week.weekNumber)
         week.dates.forEach { date ->

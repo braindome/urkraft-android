@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "se.braindome.urkraft"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -83,8 +83,9 @@ dependencies {
     // Accompanist
     implementation(libs.accompanist.pager)
 
-    // Calendar
-    implementation("com.kizitonwose.calendar:compose:2.5.4")
+    // Room
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
 
 
     implementation(libs.androidx.navigation.compose)

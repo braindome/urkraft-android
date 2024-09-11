@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -38,7 +39,7 @@ fun PlanningScreen() {
         NavHost(
             navController = navController,
             startDestination = PlanningScreenRoutes.Daily.route,
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(0.dp)
         ) {
             composable(PlanningScreenRoutes.Daily.route) {
                 DailyWorkoutScreen(dailyPlanningViewModel, navController)
