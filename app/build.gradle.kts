@@ -80,6 +80,12 @@ dependencies {
     // Lifecycle utilities for Compose
     implementation(libs.androidx.lifecycle.runtime.compose)
 
+    // Accompanist
+    implementation(libs.accompanist.pager)
+
+    // Calendar
+    implementation("com.kizitonwose.calendar:compose:2.5.4")
+
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
