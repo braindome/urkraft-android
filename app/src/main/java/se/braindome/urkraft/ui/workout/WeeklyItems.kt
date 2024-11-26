@@ -34,6 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.braindome.urkraft.model.Repository
+import se.braindome.urkraft.ui.theme.Gray20
+import se.braindome.urkraft.ui.theme.Gray40
+import se.braindome.urkraft.ui.theme.Orange60
 import se.braindome.urkraft.ui.theme.Purple40
 import se.braindome.urkraft.ui.theme.UrkraftTheme
 
@@ -42,7 +45,7 @@ fun WeeklyCard(weekNumber: Int) {
     val weekDays = listOf("M", "T", "W", "T", "F", "S", "S")
     ElevatedCard(
         colors = CardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = Gray20,
             contentColor = Color.Black,
             disabledContentColor = Color.White,
             disabledContainerColor = Color.White
@@ -114,7 +117,7 @@ fun WeeklyCardItem() {
             text = "This is a workout",
             modifier = Modifier
                 .shadow(1.dp, RoundedCornerShape(15.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .background(Orange60)
                 .fillMaxWidth()
                 .height(32.dp)
                 .clickable { showDialog = true }
@@ -134,7 +137,7 @@ fun WorkoutDialog(onDismissRequest: () -> Unit = {}) {
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
                 .size(250.dp)
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .background(Gray40)
                 .padding(8.dp)
 
         ) {
@@ -144,7 +147,7 @@ fun WorkoutDialog(onDismissRequest: () -> Unit = {}) {
                 modifier = Modifier
                     .fillMaxSize()
                     //.padding(8.dp)
-                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    //.background(MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Text(text = "Weekday", fontSize = 16.sp)
                 Column(
