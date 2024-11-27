@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -71,8 +72,7 @@ fun UrkraftBottomAppBar(navController: NavHostController) {
                         contentAlignment = Alignment.Center,
                         modifier = if (selectedItem == index) {
                             Modifier
-                                .height(60.dp)
-                                .width(60.dp)
+                                .size(60.dp)
                                 .border(1.dp, Orange60, RoundedCornerShape(10.dp))
                         } else {
                             Modifier
@@ -81,7 +81,7 @@ fun UrkraftBottomAppBar(navController: NavHostController) {
                         Icon(
                             painter = painterResource(id = i),
                             contentDescription = null,
-                            tint = Color.White
+                            tint = if (selectedItem == index) Color.White else Gray40,
                         )
                     }
 
