@@ -1,10 +1,14 @@
 package se.braindome.urkraft.ui.workout
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,6 +16,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -19,6 +24,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import se.braindome.urkraft.ui.theme.Gray20
+import se.braindome.urkraft.ui.theme.Gray60
+import se.braindome.urkraft.ui.theme.Gray80
+import se.braindome.urkraft.ui.theme.Orange60
 
 sealed class PlanningScreenRoutes(val route: String) {
     data object Daily : PlanningScreenRoutes("daily")
@@ -32,28 +41,36 @@ fun PlanningScreen() {
     val navController = rememberNavController()
     val dailyPlanningViewModel: DailyPlanningViewModel = viewModel()
     Scaffold(
-        topBar = {
-            PlanningTopNavBar(navController)
-        }
+        topBar = { PlanningTopNavBar(navController) },
+        //modifier = Modifier.fillMaxSize()
+        bottomBar = { Box(modifier = Modifier.background(Gray60)) }
     ) { paddingValues ->
-        NavHost(
-            navController = navController,
-            startDestination = PlanningScreenRoutes.Daily.route,
-            modifier = Modifier.padding(0.dp)
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                //.fillMaxSize()
+                //.background(Gray60)
         ) {
-            composable(PlanningScreenRoutes.Daily.route) {
-                DailyWorkoutScreen(dailyPlanningViewModel, navController)
-            }
-            composable(PlanningScreenRoutes.Weekly.route) {
-                WeeklyPlanningScreen()
-            }
-            composable(PlanningScreenRoutes.Monthly.route) {
-                MonthlyPlanningScreen()
-            }
-            composable(PlanningScreenRoutes.NewExercise.route) {
-                AddExerciseScreen(dailyPlanningViewModel, navController)
+            NavHost(
+                navController = navController,
+                startDestination = PlanningScreenRoutes.Daily.route,
+                modifier = Modifier.background(Gray60)
+            ) {
+                composable(PlanningScreenRoutes.Daily.route) {
+                    DailyWorkoutScreen(dailyPlanningViewModel, navController)
+                }
+                composable(PlanningScreenRoutes.Weekly.route) {
+                    WeeklyPlanningScreen()
+                }
+                composable(PlanningScreenRoutes.Monthly.route) {
+                    MonthlyPlanningScreen()
+                }
+                composable(PlanningScreenRoutes.NewExercise.route) {
+                    AddExerciseScreen(dailyPlanningViewModel, navController)
+                }
             }
         }
+
     }
 
 }
@@ -69,11 +86,23 @@ fun PlanningTopNavBar(navController: NavHostController) {
     var selected by rememberSaveable {
         mutableIntStateOf(0)
     }
-    SecondaryTabRow(selectedTabIndex = selected) {
+    SecondaryTabRow(
+        selectedTabIndex = selected,
+        containerColor = Gray60,
+        contentColor = Color.White,
+        indicator = {
+            TabRowDefaults.SecondaryIndicator(
+                color = Orange60,
+                height = 2.dp,
+                modifier = Modifier.tabIndicatorOffset(selected, matchContentSize = false)
+            )
+        }
+    ) {
         planningRoutes.forEachIndexed { index,  route ->
             Tab(
                 text = { Text(route.route) },
                 selected = selected == index,
+                selectedContentColor = Orange60,
                 onClick = {
                     selected = index
                     navController.navigate(route.route)}
@@ -86,4 +115,10 @@ fun PlanningTopNavBar(navController: NavHostController) {
 @Composable
 fun PlanningTopNavBarPreview() {
     PlanningTopNavBar(rememberNavController())
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PlanningScreenPreview() {
+    PlanningScreen()
 }
