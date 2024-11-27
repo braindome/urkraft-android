@@ -1,14 +1,8 @@
-package se.braindome.urkraft.components
+package se.braindome.urkraft.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -31,7 +25,6 @@ import se.braindome.urkraft.R
 import se.braindome.urkraft.UrkraftRoutes
 import se.braindome.urkraft.ui.theme.Gray20
 import se.braindome.urkraft.ui.theme.Gray40
-import se.braindome.urkraft.ui.theme.Gray60
 import se.braindome.urkraft.ui.theme.Gray80
 import se.braindome.urkraft.ui.theme.Orange60
 

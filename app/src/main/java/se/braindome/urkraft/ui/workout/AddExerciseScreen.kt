@@ -5,7 +5,9 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -57,6 +60,10 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import se.braindome.urkraft.model.Exercise
+import se.braindome.urkraft.ui.components.SetCheckbox
+import se.braindome.urkraft.ui.theme.Gray20
+import se.braindome.urkraft.ui.theme.Gray40
+import se.braindome.urkraft.ui.theme.Gray60
 import se.braindome.urkraft.utils.ColorSaver
 import timber.log.Timber
 
@@ -280,31 +287,37 @@ fun SwipeToDismissItem(
 @Composable
 fun TodayExerciseRow(exercise: Exercise) {
 
-    var color = Color.White // Default color
+    var color = Color.Blue // Default color
     try {
         color = Color(android.graphics.Color.parseColor(exercise.color)) // Parse color string
     } catch (e: IllegalArgumentException) {
         Timber.tag("TodayExerciseRow").e("Invalid color string: %s", exercise.color)
     }
 
-    Surface(shadowElevation = 4.dp) {
+    Surface(
+        shadowElevation = 4.dp,
+        shape = RoundedCornerShape(8.dp),
+    ) {
         Row(
+            
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp)
+                .background(Gray60)
+                .border(BorderStroke(1.dp, Color.Transparent), RoundedCornerShape(8.dp))
+
         ) {
             Surface(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(32.dp),
-                //.border(1.dp, Color.Black),
+                    .width(32.dp)
+                    .border(1.dp, Color.Transparent, RoundedCornerShape(8.dp)),
                 color = color
             ) {}
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
-                    .background(MaterialTheme.colorScheme.background)
             ) {
                 Row(
                     modifier = Modifier.padding(start = 14.dp),
@@ -324,7 +337,7 @@ fun TodayExerciseRow(exercise: Exercise) {
                 ) {
                     items(exercise.sets) {
                         val checkedState = remember { mutableStateOf(false) }
-                        Checkbox(checked = checkedState.value, onCheckedChange = { checkedState.value = it })
+                        SetCheckbox(checked = checkedState.value, onCheckedChange = { checkedState.value = it })
                     }
                 }
                 //HorizontalDivider(thickness = 2.dp)

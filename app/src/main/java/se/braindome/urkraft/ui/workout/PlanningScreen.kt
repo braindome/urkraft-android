@@ -3,6 +3,7 @@ package se.braindome.urkraft.ui.workout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -43,7 +44,7 @@ fun PlanningScreen() {
     Scaffold(
         topBar = { PlanningTopNavBar(navController) },
         //modifier = Modifier.fillMaxSize()
-        bottomBar = { Box(modifier = Modifier.background(Gray60)) }
+        bottomBar = { Box(modifier = Modifier.background(Gray80)) }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -54,7 +55,7 @@ fun PlanningScreen() {
             NavHost(
                 navController = navController,
                 startDestination = PlanningScreenRoutes.Daily.route,
-                modifier = Modifier.background(Gray60)
+                modifier = Modifier.background(Gray80)
             ) {
                 composable(PlanningScreenRoutes.Daily.route) {
                     DailyWorkoutScreen(dailyPlanningViewModel, navController)
