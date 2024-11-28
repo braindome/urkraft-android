@@ -1,6 +1,6 @@
 [versions]
 accompanistPager = "0.20.0"
-agp = "8.6.0"
+agp = "8.7.2"
 kotlin = "1.9.20"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -16,6 +16,7 @@ roomRuntime = "2.6.1"
 runtimeLivedata = "1.7.1"
 timber = "5.0.1"
 serialization = "1.6.3"
+uiTextGoogleFonts = "1.7.5"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
@@ -27,6 +28,7 @@ androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-view
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

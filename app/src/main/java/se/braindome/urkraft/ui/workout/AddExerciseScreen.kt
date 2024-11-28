@@ -36,6 +36,7 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
@@ -61,9 +63,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import se.braindome.urkraft.model.Exercise
 import se.braindome.urkraft.ui.components.SetCheckbox
+import se.braindome.urkraft.ui.components.TextButton
+import se.braindome.urkraft.ui.theme.Gray10
 import se.braindome.urkraft.ui.theme.Gray20
 import se.braindome.urkraft.ui.theme.Gray40
 import se.braindome.urkraft.ui.theme.Gray60
+import se.braindome.urkraft.ui.theme.Gray80
 import se.braindome.urkraft.utils.ColorSaver
 import timber.log.Timber
 
@@ -90,34 +95,55 @@ fun AddExerciseScreen(
         Text(
             text = "Add exercise",
             fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.displaySmall
+            style = MaterialTheme.typography.displaySmall,
+            color = Gray10
         )
 
         Spacer(modifier = Modifier.padding(8.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Surface(
-                modifier = Modifier
-                    .background(exerciseColor)
-                    .size(56.dp)
-                    .clickable {
-                        showColorPicker = true
-                    },
-                color = exerciseColor
-            ) { }
-            TextField(
-                value = uiState.exerciseName,
-                onValueChange = { viewModel.updateExerciseName(it) },
-                label = { Text("Exercise name") },
-                placeholder = { Text("Enter exercise name") },
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-            )
+                    .height(56.dp)
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .background(exerciseColor)
+                        .size(56.dp)
+                        .clickable {
+                            showColorPicker = true
+                        },
+                    color = exerciseColor,
+                ) { }
+                TextField(
+                    value = uiState.exerciseName,
+                    onValueChange = { viewModel.updateExerciseName(it) },
+                    label = { Text("Exercise name") },
+                    placeholder = { Text("Enter exercise name") },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Black,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Gray20,
+                        unfocusedContainerColor = Gray20,
+                        disabledContainerColor = Gray40,
+                        cursorColor = Color.Black,
+                        focusedLabelColor = Color.Black
+
+                    ),
+                    shape = RoundedCornerShape(0.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+
+                )
+            }
         }
+
+
 
         Spacer(modifier = Modifier.padding(8.dp))
 
@@ -134,11 +160,22 @@ fun AddExerciseScreen(
                 //placeholder = { Text("Enter number of sets") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Black,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Gray20,
+                    unfocusedContainerColor = Gray20,
+                    disabledContainerColor = Gray40,
+                    cursorColor = Color.Black,
+                    focusedLabelColor = Color.Black
+
+                ),
+                shape = RoundedCornerShape(8.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
-                //value = reps?.toString() ?: "",
                 value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
                 onValueChange = {
                     if (!it.contains(".") && !it.contains(",")) {
@@ -146,10 +183,20 @@ fun AddExerciseScreen(
                     }
                 },
                 label = { Text("Reps") },
-                //placeholder = { Text("Enter number of reps") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Black,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Gray20,
+                    unfocusedContainerColor = Gray20,
+                    disabledContainerColor = Gray40,
+                    cursorColor = Color.Black,
+                    focusedLabelColor = Color.Black
+                ),
+                shape = RoundedCornerShape(8.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
@@ -163,13 +210,25 @@ fun AddExerciseScreen(
                 label = { Text("Weight") },
                 //placeholder = { Text("0") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Black,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Gray20,
+                    unfocusedContainerColor = Gray20,
+                    disabledContainerColor = Gray40,
+                    cursorColor = Color.Black,
+                    focusedLabelColor = Color.Black
+
+                ),
+                shape = RoundedCornerShape(8.dp)
             )
         }
 
         Spacer(modifier = Modifier.padding(8.dp))
 
-        Button(onClick = {
+        TextButton(onClick = {
             scope.launch {
                 val exercise = Exercise(
                     name = uiState.exerciseName,
@@ -183,9 +242,10 @@ fun AddExerciseScreen(
                 //onConfirm()
                 navController.navigateUp()
             }
-        }) {
-            Text(text = "Confirm")
-        }
+        },
+            label = "Confirm"
+
+        )
     }
 
     if (showColorPicker) {
@@ -347,7 +407,7 @@ fun TodayExerciseRow(exercise: Exercise) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFF2A2A2A)
 @Composable
 fun AddExerciseScreenPreview() {
     val sheetState = rememberModalBottomSheetState()
@@ -364,7 +424,10 @@ fun AddExerciseScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun TodayScreenPreview() {
-    TodayScreen(viewModel = DailyPlanningViewModel())
+    Box(modifier = Modifier.background(Gray80)) {
+        TodayScreen(viewModel = DailyPlanningViewModel())
+
+    }
 }
 
 @Preview(showBackground = true)

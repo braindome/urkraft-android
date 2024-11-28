@@ -83,6 +83,9 @@ dependencies {
     // Accompanist
     implementation(libs.accompanist.pager)
 
+    // Fonts
+    implementation(libs.androidx.ui.text.google.fonts)
+
     // Room
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
