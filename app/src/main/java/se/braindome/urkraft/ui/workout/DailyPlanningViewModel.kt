@@ -11,7 +11,7 @@ data class WorkoutUiState(
     val exerciseName: String = "",
     val sets: Int = 0,
     val reps: Int = 0,
-    val weight: Float = 0f,
+    val weight: String = "0.0",
     val exerciseColor: String = "#FFFFFF",
     val showColorPicker: Boolean = false
 )
@@ -44,7 +44,7 @@ class DailyPlanningViewModel: ViewModel() {
         _uiState.value = _uiState.value.copy(reps = reps)
     }
 
-    fun updateWeight(weight: Float) {
+    fun updateWeight(weight: String) {
         _uiState.value = _uiState.value.copy(weight = weight)
     }
 

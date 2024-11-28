@@ -26,8 +26,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +48,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
@@ -151,11 +148,7 @@ fun AddExerciseScreen(
             TextField(
                 //value = sets?.toString() ?: "",
                 value = uiState.sets.takeIf { it != 0 }?.toString() ?: "",
-                onValueChange = {
-                    if (!it.contains(".") && !it.contains(",")) {
-                        it.toIntOrNull()?.let { it1 -> viewModel.updateSets(it1) }
-                    }
-                },
+                onValueChange = { viewModel.updateSets(it.toIntOrNull() ?: 0) },
                 label = { Text("Sets") },
                 //placeholder = { Text("Enter number of sets") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -177,11 +170,7 @@ fun AddExerciseScreen(
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
                 value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
-                onValueChange = {
-                    if (!it.contains(".") && !it.contains(",")) {
-                        it.toIntOrNull()?.let { it1 -> viewModel.updateReps(it1) }
-                    }
-                },
+                onValueChange = { viewModel.updateReps(it.toIntOrNull() ?: 0) },
                 label = { Text("Reps") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
@@ -200,15 +189,14 @@ fun AddExerciseScreen(
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
-                //value = if (weight == 0f) "" else weight.toString(),
-                //value = weight?.takeIf { it != 0f }?.toString() ?: "",
-                value = uiState.weight.takeIf { it != 0f }?.let { if (it % 1 == 0f) it.toString() else it.toString() } ?: "",
+                value =  if (uiState.weight == "0.0") "" else uiState.weight.removeSuffix(".0"),
                 onValueChange = {
-                    //(it.toFloatOrNull() ?: weight)?.let { it1 -> viewModel.updateWeight(it1) }
-                    it.replace(",", ".").toFloatOrNull()?.let { it1 -> viewModel.updateWeight(it1) }
+                    val sanitizedInput = it.replace(',', '.')
+                    if (sanitizedInput.isEmpty() || sanitizedInput == "." || sanitizedInput.toDoubleOrNull() != null ) {
+                        viewModel.updateWeight(sanitizedInput)
+                    }
                 },
                 label = { Text("Weight") },
-                //placeholder = { Text("0") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f),
                 colors = TextFieldDefaults.colors(
@@ -234,7 +222,7 @@ fun AddExerciseScreen(
                     name = uiState.exerciseName,
                     sets = uiState.sets ?: 0,
                     reps = uiState.reps ?: 0,
-                    weight = uiState.weight ?: 0f,
+                    weight = uiState.weight.toDoubleOrNull() ?: 0.0,
                     color = String.format("#%06X", (0xFFFFFF and exerciseColor.toArgb()))
                 )
                 viewModel.addExerciseToList(exercise)
@@ -433,5 +421,5 @@ fun TodayScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun TodayExerciseRowPreview() {
-    TodayExerciseRow(Exercise(name = "Bench press", sets = 3, reps = 8, weight = 80f))
+    TodayExerciseRow(Exercise(name = "Bench press", sets = 3, reps = 8, weight = 80.0))
 }

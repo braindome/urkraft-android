@@ -22,6 +22,6 @@ data class Exercise(
     @ColumnInfo(name = "exercise_name") val name: String,
     @ColumnInfo(name = "sets") val sets: Int,
     @ColumnInfo(name = "reps") val reps: Int,
-    @ColumnInfo(name = "weight") val weight: Float,
+    @ColumnInfo(name = "weight") val weight: Double,
     @ColumnInfo(name = "color_tag") val color: String = "#FFFFFF"
 )
