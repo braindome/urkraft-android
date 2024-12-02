@@ -70,6 +70,7 @@ import se.braindome.urkraft.ui.theme.Gray60
 import se.braindome.urkraft.ui.theme.Gray80
 import se.braindome.urkraft.utils.ColorSaver
 import timber.log.Timber
+import java.util.UUID
 
 @Composable
 fun AddExerciseScreen(
@@ -229,7 +230,7 @@ fun AddExerciseScreen(
         TextButton(onClick = {
             scope.launch {
                 val exercise = Exercise(
-                    id = exerciseToEditId ?: "",
+                    id = exerciseToEditId ?: UUID.randomUUID().toString(),
                     name = uiState.exerciseName,
                     sets = uiState.sets ?: 0,
                     reps = uiState.reps ?: 0,
