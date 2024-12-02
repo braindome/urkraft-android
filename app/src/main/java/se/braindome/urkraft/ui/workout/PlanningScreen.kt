@@ -35,6 +35,7 @@ sealed class PlanningScreenRoutes(val route: String) {
     data object Weekly : PlanningScreenRoutes("weekly")
     data object Monthly : PlanningScreenRoutes("monthly")
     data object NewExercise : PlanningScreenRoutes("new_exercise")
+    data object EditExercise : PlanningScreenRoutes("edit_exercise")
 }
 
 @Composable
@@ -67,7 +68,19 @@ fun PlanningScreen() {
                     MonthlyPlanningScreen()
                 }
                 composable(PlanningScreenRoutes.NewExercise.route) {
-                    AddExerciseScreen(dailyPlanningViewModel, navController)
+                    AddExerciseScreen(
+                        viewModel = dailyPlanningViewModel,
+                        navController = navController
+                    )
+                }
+                composable(PlanningScreenRoutes.EditExercise.route + "/{exerciseId}") { backStackEntry ->
+                    val exerciseId = backStackEntry.arguments?.getString("exerciseId")
+                    AddExerciseScreen(
+                        viewModel = dailyPlanningViewModel,
+                        navController = navController,
+                        isEditing = true,
+                        exerciseToEditId = exerciseId
+                    )
                 }
             }
         }

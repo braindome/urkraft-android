@@ -85,7 +85,6 @@ fun UrkraftApp() {
                 composable(UrkraftRoutes.DASHBOARD.route) { HomeScreen() }
                 composable(UrkraftRoutes.PROFILE.route) { ProfileScreen() }
                 composable(UrkraftRoutes.SETTINGS.route) { SettingsScreen() }
-
             }
         }
 

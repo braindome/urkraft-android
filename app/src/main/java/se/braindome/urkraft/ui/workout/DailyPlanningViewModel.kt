@@ -59,8 +59,22 @@ class DailyPlanningViewModel: ViewModel() {
         Timber.d("Added $exercise to list: $exercises")
     }
 
+    fun updateExerciseInList(exercise: Exercise) {
+        val updatedList = _exercises.value.toMutableList()
+        val index = updatedList.indexOfFirst { it.id == exercise.id }
+        if (index != -1) {
+            updatedList[index] = exercise
+            _exercises.value = updatedList
+        }
+        _exercises.value = updatedList
+    }
+
     fun removeExerciseFromList(exercise: Exercise) {
         val updatedList = _exercises.value.filter { it.id != exercise.id }
         _exercises.value = updatedList
+    }
+
+    fun getExerciseById(id: String?): Exercise? {
+        return _exercises.value.find { it.id == id }
     }
 }

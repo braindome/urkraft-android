@@ -64,6 +64,7 @@ fun TodayScreen(viewModel: DailyPlanningViewModel) {
                         SwipeToDismissItem(
                             item = item,
                             viewModel = viewModel,
+                            navController = navController,
                             modifier = Modifier
                                 .padding(8.dp)
                                 .animateItem(spring(200F))

@@ -6,9 +6,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,14 +74,26 @@ import timber.log.Timber
 @Composable
 fun AddExerciseScreen(
     viewModel: DailyPlanningViewModel,
-    //onConfirm: () -> Unit,
-    navController: NavHostController
+    isEditing: Boolean = false,
+    navController: NavHostController,
+    exerciseToEditId: String? = null
 )  {
 
     val uiState by viewModel.uiState.collectAsState()
     var exerciseColor by rememberSaveable(saver = ColorSaver) { mutableStateOf(Color.Red) } // Default color
     var showColorPicker by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(exerciseToEditId) {
+        val exerciseToEdit = viewModel.getExerciseById(exerciseToEditId)
+        exerciseToEdit?.let {
+            viewModel.updateExerciseName(it.name)
+            viewModel.updateSets(it.sets)
+            viewModel.updateReps(it.reps)
+            viewModel.updateWeight(it.weight.toString())
+            exerciseColor = Color(android.graphics.Color.parseColor(it.color))
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -90,7 +104,7 @@ fun AddExerciseScreen(
     ) {
 
         Text(
-            text = "Add exercise",
+            text = if (isEditing) "Edit exercise" else "Add exercise",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.displaySmall,
             color = Gray10
@@ -140,17 +154,13 @@ fun AddExerciseScreen(
             }
         }
 
-
-
         Spacer(modifier = Modifier.padding(8.dp))
 
         Row {
             TextField(
-                //value = sets?.toString() ?: "",
                 value = uiState.sets.takeIf { it != 0 }?.toString() ?: "",
                 onValueChange = { viewModel.updateSets(it.toIntOrNull() ?: 0) },
                 label = { Text("Sets") },
-                //placeholder = { Text("Enter number of sets") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .weight(1f),
@@ -219,19 +229,24 @@ fun AddExerciseScreen(
         TextButton(onClick = {
             scope.launch {
                 val exercise = Exercise(
+                    id = exerciseToEditId ?: "",
                     name = uiState.exerciseName,
                     sets = uiState.sets ?: 0,
                     reps = uiState.reps ?: 0,
                     weight = uiState.weight.toDoubleOrNull() ?: 0.0,
                     color = String.format("#%06X", (0xFFFFFF and exerciseColor.toArgb()))
                 )
-                viewModel.addExerciseToList(exercise)
-                viewModel.resetExerciseValues()
+                if (isEditing) {
+                    viewModel.updateExerciseInList(exercise)
+                } else {
+                    viewModel.addExerciseToList(exercise)
+                }
+                //viewModel.resetExerciseValues()
                 //onConfirm()
                 navController.navigateUp()
             }
         },
-            label = "Confirm"
+            label = if (isEditing) "Save" else "Add",
 
         )
     }
@@ -283,6 +298,7 @@ fun ColorPickerMenu(
 fun SwipeToDismissItem(
     item: Exercise,
     viewModel: DailyPlanningViewModel,
+    navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     var isRemoved by remember { mutableStateOf(false) }
@@ -325,15 +341,19 @@ fun SwipeToDismissItem(
             },
             modifier = modifier
         ) {
-            TodayExerciseRow(item)
+            TodayExerciseRow(
+                exercise = item,
+                onLongPress = {navController.navigate("edit_exercise/${item.id}")}
+            )
         }
 
     }
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TodayExerciseRow(exercise: Exercise) {
+fun TodayExerciseRow(exercise: Exercise, onLongPress: (Exercise) -> Unit) {
 
     var color = Color.Blue // Default color
     try {
@@ -345,6 +365,10 @@ fun TodayExerciseRow(exercise: Exercise) {
     Surface(
         shadowElevation = 4.dp,
         shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.combinedClickable(
+            onClick = {},
+            onLongClick = { onLongPress(exercise) }
+        )
     ) {
         Row(
             
@@ -421,5 +445,5 @@ fun TodayScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun TodayExerciseRowPreview() {
-    TodayExerciseRow(Exercise(name = "Bench press", sets = 3, reps = 8, weight = 80.0))
+    TodayExerciseRow(Exercise(name = "Bench press", sets = 3, reps = 8, weight = 80.0), onLongPress = {})
 }

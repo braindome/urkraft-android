@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
@@ -46,31 +47,47 @@ fun DailyWorkoutScreen(
     val exercises by viewModel.exercises.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     var isAddExerciseScreenOpen by rememberSaveable { mutableStateOf(false) }
+    val isWorkoutAvailable by rememberSaveable { mutableStateOf(true) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(text = "Today's workout")
-            Spacer(modifier = Modifier.height(8.dp))
-
-            LazyColumn(
-                state = rememberLazyListState(),
-                contentPadding = PaddingValues(bottom = 8.dp),
-                modifier = Modifier.fillMaxSize()
+        if (isWorkoutAvailable) {
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
-                items(exercises, key = { it.id }) { item ->
-                    SwipeToDismissItem(
-                        item = item,
-                        viewModel = viewModel,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .animateItem(spring(200F))
+                Text(text = "Today's workout", fontSize = 24.sp, color = Orange60)
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    )
+                LazyColumn(
+                    state = rememberLazyListState(),
+                    contentPadding = PaddingValues(bottom = 8.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(exercises, key = { it.id }) { item ->
+                        SwipeToDismissItem(
+                            item = item,
+                            viewModel = viewModel,
+                            navController = navController,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .animateItem(spring(200F))
+
+                        )
+                    }
                 }
             }
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(50.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "No workout available. Please add an exercise to start.",
+                    fontSize = 24.sp,
+                    color = Orange60
+                )
+            }
         }
+
 
         FloatingActionButton(
             onClick = {
