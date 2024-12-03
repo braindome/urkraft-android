@@ -18,6 +18,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CalendarLocale
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerColors
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +39,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.braindome.urkraft.model.CalenderRepository
+import se.braindome.urkraft.ui.theme.Gray20
+import se.braindome.urkraft.ui.theme.Gray80
+import se.braindome.urkraft.ui.theme.Orange80
 import timber.log.Timber
 import java.util.Calendar
 import java.util.Date
@@ -188,7 +193,21 @@ fun WeekNumberCell(weekNumber: Int) {
 @Composable
 fun MaterialPicker() {
     DatePicker(
-        rememberDatePickerState()
+        state = rememberDatePickerState(),
+        colors = DatePickerDefaults.colors(
+            containerColor = Gray80,
+            weekdayContentColor = Orange80,
+            titleContentColor = Orange80,
+            headlineContentColor = Orange80,
+            subheadContentColor = Orange80,
+            navigationContentColor = Orange80,
+            dayContentColor = Orange80,
+            selectedDayContainerColor = Orange80,
+            selectedDayContentColor = Orange80,
+            todayDateBorderColor = Orange80,
+            todayContentColor = Orange80,
+            dividerColor = Orange80,
+        )
     )
 }
 
