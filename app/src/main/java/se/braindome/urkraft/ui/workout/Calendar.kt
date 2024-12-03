@@ -16,9 +16,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CalendarLocale
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -179,6 +184,14 @@ fun WeekNumberCell(weekNumber: Int) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MaterialPicker() {
+    DatePicker(
+        rememberDatePickerState()
+    )
+}
+
 @Preview
 @Composable
 fun DayCellPreview() {
@@ -190,4 +203,10 @@ fun DayCellPreview() {
 @Composable
 fun GridCalendarPreview() {
     GridCalendar()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PickerPreview() {
+    MaterialPicker()
 }

@@ -3,7 +3,6 @@ package se.braindome.urkraft.ui.workout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,9 +15,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,8 +35,6 @@ import se.braindome.urkraft.model.Repository
 import se.braindome.urkraft.ui.theme.Gray20
 import se.braindome.urkraft.ui.theme.Gray40
 import se.braindome.urkraft.ui.theme.Orange60
-import se.braindome.urkraft.ui.theme.Purple40
-import se.braindome.urkraft.ui.theme.UrkraftTheme
 
 @Composable
 fun WeeklyCard(weekNumber: Int) {
@@ -51,13 +47,13 @@ fun WeeklyCard(weekNumber: Int) {
             disabledContainerColor = Color.White
         ),
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(8.dp),
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.SpaceAround,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(8.dp),
 
             ) {
@@ -67,24 +63,21 @@ fun WeeklyCard(weekNumber: Int) {
                 modifier = Modifier
                     .padding(start = 8.dp)
             )
-            weekDays.forEach { day ->
-                Column(
-                    modifier = Modifier
-                        .height(56.dp)
+            weekDays.forEachIndexed {index, day ->
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = day,
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                                .size(24.dp)
-                        )
-                        WeeklyCardItem()
-                    }
+                    Text(
+                        text = day,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .size(24.dp)
+                    )
+                    WeeklyCardItem()
+                }
+                if (index != weekDays.lastIndex) {
                     HorizontalDivider(
                         modifier = Modifier
                             .height(1.dp)
@@ -92,7 +85,6 @@ fun WeeklyCard(weekNumber: Int) {
                         color = Color.Black
                     )
                 }
-
             }
         }
     }
@@ -108,20 +100,22 @@ fun WeeklyCardItem() {
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .height(56.dp)
+            //.height(56.dp)
             .fillMaxWidth()
             .padding(bottom = 8.dp),
     ) {
         Text(
             lineHeight = 32.sp,
             text = "This is a workout",
+            fontSize = 22.sp,
+            textAlign = TextAlign.Start,
             modifier = Modifier
                 .shadow(1.dp, RoundedCornerShape(15.dp))
                 .background(Orange60)
                 .fillMaxWidth()
-                .height(32.dp)
+                .height(48.dp)
                 .clickable { showDialog = true }
-                .padding(start = 8.dp)
+                .padding(8.dp)
 
         )
     }

@@ -61,8 +61,10 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import se.braindome.urkraft.model.Exercise
+import se.braindome.urkraft.ui.components.DecimalTextField
+import se.braindome.urkraft.ui.components.NumericInputType
 import se.braindome.urkraft.ui.components.SetCheckbox
-import se.braindome.urkraft.ui.components.SetsTextField
+import se.braindome.urkraft.ui.components.NumericTextField
 import se.braindome.urkraft.ui.components.TextButton
 import se.braindome.urkraft.ui.theme.Gray10
 import se.braindome.urkraft.ui.theme.Gray20
@@ -159,7 +161,7 @@ fun AddExerciseScreen(
         Spacer(modifier = Modifier.padding(8.dp))
 
         Row {
-            SetsTextField(
+            NumericTextField(
                 value = uiState.sets.takeIf { it != 0 }?.toString() ?: "",
                 onValueChange = {
                     if (it.isEmpty()) {
@@ -171,6 +173,7 @@ fun AddExerciseScreen(
                         }
                     }
                 },
+                inputType = NumericInputType.SETS,
                 modifier = Modifier.weight(1f)
             )
             /*
@@ -195,6 +198,22 @@ fun AddExerciseScreen(
                 shape = RoundedCornerShape(8.dp)
             )*/
             Spacer(modifier = Modifier.width(8.dp))
+            NumericTextField(
+                value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
+                onValueChange = {
+                    if (it.isEmpty()) {
+                        viewModel.updateReps(0)
+                    } else {
+                        val newValue = it.toIntOrNull()
+                        if (newValue != null && newValue in 1..50) {
+                            viewModel.updateReps(newValue)
+                        }
+                    }
+                },
+                inputType = NumericInputType.REPS,
+                modifier = Modifier.weight(1f)
+            )
+            /*
             TextField(
                 value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
                 onValueChange = { viewModel.updateReps(it.toIntOrNull() ?: 0) },
@@ -214,7 +233,19 @@ fun AddExerciseScreen(
                 ),
                 shape = RoundedCornerShape(8.dp)
             )
+            */
             Spacer(modifier = Modifier.width(8.dp))
+            DecimalTextField(
+                value =  if (uiState.weight == "0.0") "" else uiState.weight.removeSuffix(".0"),
+                onValueChange = {
+                    val sanitizedInput = it.replace(',', '.')
+                    if (sanitizedInput.isEmpty() || sanitizedInput == "." || sanitizedInput.toDoubleOrNull() != null ) {
+                        viewModel.updateWeight(sanitizedInput)
+                    }
+                },
+                modifier = Modifier.weight(1f),
+            )
+            /*
             TextField(
                 value =  if (uiState.weight == "0.0") "" else uiState.weight.removeSuffix(".0"),
                 onValueChange = {
@@ -239,6 +270,8 @@ fun AddExerciseScreen(
                 ),
                 shape = RoundedCornerShape(8.dp)
             )
+
+             */
         }
 
         Spacer(modifier = Modifier.padding(8.dp))
