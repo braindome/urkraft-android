@@ -58,7 +58,7 @@ fun WeeklyCard(weekNumber: Int) {
 
             ) {
             Text(
-                text = "Week $weekNumber",
+                text = "Week Title",
                 fontSize = 24.sp,
                 modifier = Modifier
                     .padding(start = 8.dp)
