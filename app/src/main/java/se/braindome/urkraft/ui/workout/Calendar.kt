@@ -3,6 +3,7 @@ package se.braindome.urkraft.ui.workout
 import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,10 +15,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -34,6 +42,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.braindome.urkraft.model.CalenderRepository
+import se.braindome.urkraft.ui.theme.Gray20
+import se.braindome.urkraft.ui.theme.Gray40
+import se.braindome.urkraft.ui.theme.Gray60
 import se.braindome.urkraft.ui.theme.Gray80
 import se.braindome.urkraft.ui.theme.Orange80
 import timber.log.Timber
@@ -44,6 +55,7 @@ import java.util.Locale
 @Composable
 fun GridCalendar() {
     val currentDate = remember { mutableStateOf(Date()) }
+    val selectedDate = remember { mutableStateOf<Date?>(null) }
     val daysInCurrentMonth = CalenderRepository.generateDaysForMonth(currentDate.value)
     val weeksInCurrentMonth = CalenderRepository.generateWeeksForMonth(currentDate.value)
 
@@ -52,12 +64,11 @@ fun GridCalendar() {
         modifier = Modifier.fillMaxSize(),
             //.size(550.dp),
             //.padding(end = 16.dp, start = 16.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         MonthNavigation(currentDate = currentDate) { newDate ->
             currentDate.value = newDate
-
         }
         WeekDaysRow()
         Column(
@@ -65,9 +76,10 @@ fun GridCalendar() {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             for (week in weeksInCurrentMonth) {
-                WeekRow(week = week)
+                WeekRow(week = week, selectedDate = selectedDate)
             }
         }
+        WorkoutPreview()
     }
 
 }
@@ -92,19 +104,31 @@ fun MonthNavigation(
             currentDate.value = calendar.time
             onMonthChange(calendar.time)
         }) {
-            Text("<")
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Next month",
+                tint = Orange80,
+                modifier = Modifier.size(24.dp)
+            )
         }
         Text(
             text = monthName,
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            color = Orange80
         )
-        TextButton(onClick = {
+        IconButton(onClick = {
             calendar.add(Calendar.MONTH, 1)
             currentDate.value = calendar.time
             onMonthChange(calendar.time)
         }) {
-            Text(">")
+            //Text(">", color = Orange80, modifier = Modifier.size(24.dp))
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Next month",
+                tint = Orange80,
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
 }
@@ -115,9 +139,9 @@ fun WeekDaysRow() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(start = 0.dp, end = 16.dp)
     ) {
-        Spacer(modifier = Modifier.size(24.dp))
+        Spacer(modifier = Modifier.size(26.dp))
         val days = listOf("M", "T", "W", "T", "F", "S", "S")
         days.forEach { day ->
             Text(
@@ -125,44 +149,59 @@ fun WeekDaysRow() {
                 style = MaterialTheme.typography.labelLarge,
                 fontSize = 14.sp,
                 modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = Orange80
             )
         }
     }
 }
 
 @Composable
-fun WeekRow(week: CalenderRepository.Week) {
+fun WeekRow(week: CalenderRepository.Week, selectedDate: MutableState<Date?>) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().padding(2.dp)
             //.padding(end = 4.dp, start = 4.dp)
     ) {
         WeekNumberCell(weekNumber = week.weekNumber)
-        week.dates.forEach { date ->
-            DayCell(day = date.dayOfMonth, isCurrentMonth = date.isCurrentMonth)
+        week.dates.forEach { dateInfo ->
+            DayCell(day = dateInfo.dayOfMonth, isCurrentMonth = dateInfo.isCurrentMonth, date = dateInfo.date, selectedDate = selectedDate)
+            Spacer(modifier = Modifier.size(10.dp))
         }
     }
 }
 
 @Composable
-fun DayCell(day: Int, isCurrentMonth: Boolean) {
-    val backgroundColor = if (isCurrentMonth) Color.White else Color.LightGray
+fun DayCell(day: Int, isCurrentMonth: Boolean, date: Date, selectedDate: MutableState<Date?>) {
+    var isSelected = selectedDate.value == date
+    val backgroundColor = when {
+        isSelected -> Orange80
+        isCurrentMonth -> Gray40
+        else -> Gray80
+    }
 
-    Box(
+    Surface(
         modifier = Modifier
             .size(48.dp)
-            .background(color = backgroundColor)
-            .clip(shape = RoundedCornerShape(5.dp))
-            .border(1.dp, Color.Gray),
-        contentAlignment = Alignment.Center
+            .clip(shape = RoundedCornerShape(8.dp))
+            .clickable { selectedDate.value = if (isSelected) null else date },
     ) {
-        Text(
-            text = day.toString(),
-            fontSize = 18.sp
-        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = backgroundColor)
+
+        ) {
+            Text(
+                text = day.toString(),
+                fontSize = 18.sp,
+                color = if (isSelected) Color.Black else if (isCurrentMonth) Orange80 else Gray40,
+            )
+        }
+
     }
 }
 
@@ -171,14 +210,15 @@ fun WeekNumberCell(weekNumber: Int) {
     // Display the week number
     Box(
         modifier = Modifier
+            .padding(2.dp)
             .size(height = 24.dp, width = 24.dp)
-            .clip(shape = CircleShape)
-            .background(color = Color.Cyan),
+            .clip(shape = CircleShape),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = weekNumber.toString(),
-            fontSize = 12.sp
+            fontSize = 14.sp,
+            color = Orange80
         )
     }
 }
@@ -208,10 +248,10 @@ fun UrkraftDatePicker() {
 //@Preview
 @Composable
 fun DayCellPreview() {
-    DayCell(day = 1, isCurrentMonth = true)
+    //DayCell(day = 1, isCurrentMonth = true, date = Date(), selectedDate = mutableStateOf(null))
 }
 
-//@Preview(showBackground = true)
+@Preview(showBackground = false)
 @Composable
 fun GridCalendarPreview() {
     GridCalendar()

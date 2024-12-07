@@ -12,7 +12,7 @@ object CalenderRepository {
     data class Week(val weekNumber: Int, val dates: List<DateInfo>)
 
     // A helper data class to represent a date
-    data class DateInfo(val dayOfMonth: Int, val isCurrentMonth: Boolean)
+    data class DateInfo(val dayOfMonth: Int, val isCurrentMonth: Boolean, val date: Date)
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun generateWeeksForMonth(date: Date): List<Week> {
@@ -35,7 +35,7 @@ object CalenderRepository {
                 currentWeekNumber = currentDate.get(weekFields.weekOfWeekBasedYear())
             }
 
-            currentWeek.add(DateInfo(currentDate.dayOfMonth, currentDate.month == localDate.month))
+            currentWeek.add(DateInfo(currentDate.dayOfMonth, currentDate.month == localDate.month, Date.from(currentDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())))
             currentDate = currentDate.plusDays(1)
         }
 
@@ -47,7 +47,7 @@ object CalenderRepository {
         while (weeks.size < 6) {
             currentWeek = mutableListOf()
             for (i in 1..7) {
-                currentWeek.add(DateInfo(currentDate.dayOfMonth, false))
+                currentWeek.add(DateInfo(currentDate.dayOfMonth, false, Date.from(currentDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())))
                 currentDate = currentDate.plusDays(1)
             }
             weeks.add(Week(currentWeekNumber, currentWeek))
@@ -66,7 +66,7 @@ object CalenderRepository {
 
         val days = mutableListOf<DateInfo>()
         while (calendar.get(Calendar.MONTH) == date.month) {
-            days.add(DateInfo(calendar.get(Calendar.DAY_OF_MONTH), true))
+            days.add(DateInfo(calendar.get(Calendar.DAY_OF_MONTH), true, calendar.time))
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
 

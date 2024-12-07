@@ -26,14 +26,13 @@ import se.braindome.urkraft.ui.theme.Orange60
 
 @Composable
 fun MonthlyPlanningScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize().padding(8.dp),
-        contentAlignment = Alignment.TopCenter
-    ) {
+
         Column(
-            modifier = Modifier.fillMaxSize(),
+            //modifier = Modifier.fillMaxSize(),
         ) {
-            UrkraftDatePicker()
+            //MonthSelectorBar()
+            GridCalendar()
+            //UrkraftDatePicker()
             WorkoutPreview()
         }
         /*
@@ -48,7 +47,7 @@ fun MonthlyPlanningScreen() {
         }
 
          */
-    }
+
 }
 
 @Composable
@@ -56,7 +55,7 @@ fun WorkoutPreview() {
     Surface(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
-            .padding(16.dp)
+            .padding(28.dp)
             .clickable { /* TODO: Navigate to workout */ }
     ) {
         Column(
