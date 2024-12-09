@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import se.braindome.urkraft.ui.onboarding.OnboardingScreen
 
 @Composable
 fun HomeScreen() {
@@ -19,7 +20,8 @@ fun HomeScreen() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Home", fontSize = 30.sp, color = Color.Black )
+            OnboardingScreen()
+            //Text("Home", fontSize = 30.sp, color = Color.Black )
         }
     }
 }
