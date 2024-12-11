@@ -61,6 +61,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import se.braindome.urkraft.model.Exercise
+import se.braindome.urkraft.ui.components.CheckboxState
 import se.braindome.urkraft.ui.components.DecimalTextField
 import se.braindome.urkraft.ui.components.NumericInputType
 import se.braindome.urkraft.ui.components.SetCheckbox
@@ -453,13 +454,13 @@ fun TodayExerciseRow(exercise: Exercise, onLongPress: (Exercise) -> Unit) {
                     Text(text = "${exercise.weight} kg")
                 }
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy((-16).dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(start = 1.dp, end = 1.dp)
                 ) {
                     items(exercise.sets) {
-                        val checkedState = remember { mutableStateOf(false) }
-                        SetCheckbox(checked = checkedState.value, onCheckedChange = { checkedState.value = it })
+                        val checkedState = remember { mutableStateOf(CheckboxState.EMPTY) }
+                        SetCheckbox(state = checkedState.value, onStateChange = { checkedState.value = it })
                     }
                 }
                 //HorizontalDivider(thickness = 2.dp)
