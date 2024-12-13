@@ -46,7 +46,7 @@ fun SetCheckbox(state: CheckboxState, onStateChange: (CheckboxState) -> Unit) {
 
     Box(
         modifier = Modifier
-            .size(22.dp)
+            .size(20.dp)
             .background(
                 color = Gray40,
                 shape = CircleShape
@@ -68,7 +68,7 @@ fun SetCheckbox(state: CheckboxState, onStateChange: (CheckboxState) -> Unit) {
                     else -> Color.Unspecified
                 },
                 modifier = Modifier
-                    .size(22.dp)
+                    .size(24.dp)
                     .align(Alignment.Center)
             )
         }
