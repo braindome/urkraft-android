@@ -115,7 +115,6 @@ fun ProgramSelectionPage() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgramPropertyPage() {
     val programName by rememberSaveable { mutableStateOf("") }

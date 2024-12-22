@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import se.braindome.urkraft.ui.theme.Gray20
 import se.braindome.urkraft.ui.theme.Gray40
 import se.braindome.urkraft.ui.theme.Gray80
@@ -29,7 +30,7 @@ fun TextButton(onClick: () -> Unit, label: String) {
         shape = RoundedCornerShape(8.dp),
         elevation = ButtonDefaults.buttonElevation(2.dp)
     ) {
-        Text(label)
+        Text(label, fontSize = 18.sp)
     }
 }
 

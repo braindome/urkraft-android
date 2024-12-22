@@ -24,13 +24,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -53,25 +51,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import se.braindome.urkraft.model.Exercise
 import se.braindome.urkraft.ui.components.CheckboxState
+import se.braindome.urkraft.ui.components.ColorPickerMenu
 import se.braindome.urkraft.ui.components.DecimalTextField
 import se.braindome.urkraft.ui.components.NumericInputType
-import se.braindome.urkraft.ui.components.SetCheckbox
 import se.braindome.urkraft.ui.components.NumericTextField
+import se.braindome.urkraft.ui.components.SetCheckbox
 import se.braindome.urkraft.ui.components.TextButton
 import se.braindome.urkraft.ui.theme.Gray10
 import se.braindome.urkraft.ui.theme.Gray20
 import se.braindome.urkraft.ui.theme.Gray40
 import se.braindome.urkraft.ui.theme.Gray60
 import se.braindome.urkraft.ui.theme.Gray80
+import se.braindome.urkraft.ui.theme.Orange60
 import se.braindome.urkraft.utils.ColorSaver
 import timber.log.Timber
 import java.util.UUID
@@ -88,6 +89,7 @@ fun AddExerciseScreen(
     var exerciseColor by rememberSaveable(saver = ColorSaver) { mutableStateOf(Color.Red) } // Default color
     var showColorPicker by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    var isAmrap by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(exerciseToEditId) {
         val exerciseToEdit = viewModel.getExerciseById(exerciseToEditId)
@@ -160,6 +162,185 @@ fun AddExerciseScreen(
         }
 
         Spacer(modifier = Modifier.padding(8.dp))
+
+        Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Center) {
+            Text(
+                text = "Is this exercise AMRAP?",
+                fontSize = 18.sp,
+                textAlign = TextAlign.Start,
+                color = Gray20
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Yes",
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start,
+                        color = Gray20
+                    )
+                    RadioButton(
+                        selected = isAmrap,
+                        onClick = { isAmrap = true },
+                        colors = RadioButtonColors(
+                            selectedColor = Orange60,
+                            unselectedColor = Gray20,
+                            disabledSelectedColor = Gray20,
+                            disabledUnselectedColor = Gray20
+                        )
+                    )
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "No",
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start,
+                        color = Gray20
+                    )
+                    RadioButton(
+                        selected = !isAmrap,
+                        onClick = { isAmrap = false },
+                        colors = RadioButtonColors(
+                            selectedColor = Orange60,
+                            unselectedColor = Gray20,
+                            disabledSelectedColor = Gray20,
+                            disabledUnselectedColor = Gray20
+                        )
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        if (!isAmrap) {
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Number of sets",
+                        modifier = Modifier.weight(1f),
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start,
+                        color = Gray20
+                    )
+                    Spacer(modifier = Modifier.weight(0.5f))
+                    NumericTextField(
+                        value = uiState.sets.takeIf { it != 0 }?.toString() ?: "",
+                        onValueChange = {
+                            if (it.isEmpty()) {
+                                viewModel.updateSets(0)
+                            } else {
+                                val newValue = it.toIntOrNull()
+                                if (newValue != null && newValue in 1..20) {
+                                    viewModel.updateSets(newValue)
+                                }
+                            }
+                        },
+                        inputType = NumericInputType.SETS,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Spacer(modifier = Modifier.padding(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Number of reps",
+                        modifier = Modifier.weight(1f),
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start,
+                        color = Gray20
+                    )
+                    Spacer(modifier = Modifier.weight(0.5f))
+                    NumericTextField(
+                        value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
+                        onValueChange = {
+                            if (it.isEmpty()) {
+                                viewModel.updateReps(0)
+                            } else {
+                                val newValue = it.toIntOrNull()
+                                if (newValue != null && newValue in 1..50) {
+                                    viewModel.updateReps(newValue)
+                                }
+                            }
+                        },
+                        inputType = NumericInputType.REPS,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Spacer(modifier = Modifier.padding(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Weight",
+                        modifier = Modifier.weight(1f),
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start,
+                        color = Gray20
+                    )
+                    Spacer(modifier = Modifier.weight(0.5f))
+                    DecimalTextField(
+                        value =  if (uiState.weight == "0.0") "" else uiState.weight.removeSuffix(".0"),
+                        onValueChange = {
+                            val sanitizedInput = it.replace(',', '.')
+                            if (sanitizedInput.isEmpty() || sanitizedInput == "." || sanitizedInput.toDoubleOrNull() != null ) {
+                                viewModel.updateWeight(sanitizedInput)
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+        } else {
+            Column {
+                Spacer(modifier = Modifier.padding(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Minimum reps",
+                        modifier = Modifier.weight(1f),
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start,
+                        color = Gray20
+                    )
+                    Spacer(modifier = Modifier.weight(0.5f))
+                    NumericTextField(
+                        value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
+                        onValueChange = {
+                            if (it.isEmpty()) {
+                                viewModel.updateReps(0)
+                            } else {
+                                val newValue = it.toIntOrNull()
+                                if (newValue != null && newValue in 1..50) {
+                                    viewModel.updateReps(newValue)
+                                }
+                            }
+                        },
+                        inputType = NumericInputType.REPS,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Spacer(modifier = Modifier.padding(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Weight",
+                        modifier = Modifier.weight(1f),
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start,
+                        color = Gray20
+                    )
+                    Spacer(modifier = Modifier.weight(0.5f))
+                    DecimalTextField(
+                        value =  if (uiState.weight == "0.0") "" else uiState.weight.removeSuffix(".0"),
+                        onValueChange = {
+                            val sanitizedInput = it.replace(',', '.')
+                            if (sanitizedInput.isEmpty() || sanitizedInput == "." || sanitizedInput.toDoubleOrNull() != null ) {
+                                viewModel.updateWeight(sanitizedInput)
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+        }
+
+
+        /*
 
         Row {
             NumericTextField(
@@ -275,6 +456,8 @@ fun AddExerciseScreen(
              */
         }
 
+         */
+
         Spacer(modifier = Modifier.padding(8.dp))
 
         TextButton(onClick = {
@@ -311,37 +494,6 @@ fun AddExerciseScreen(
                 showColorPicker = false
             }
         )
-    }
-}
-
-@Composable
-fun ColorPickerMenu(
-    showMenu: () -> Boolean,
-    onDismiss: () -> Unit,
-    onColorSelected: (Color) -> Unit
-) {
-    val colors = listOf(Color.White, Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Cyan, Color.Magenta)
-
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        DropdownMenu(
-            expanded = showMenu(),
-            onDismissRequest = onDismiss
-        ) {
-            colors.forEach { color ->
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(color)
-                        .clickable { onColorSelected(color) }
-                )
-            }
-        }
     }
 }
 
