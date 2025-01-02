@@ -1,9 +1,11 @@
 package se.braindome.urkraft.ui.onboarding
 
+import android.R.attr.contentDescription
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,18 +15,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,14 +45,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import se.braindome.urkraft.R
+import androidx.room.util.TableInfo
 import se.braindome.urkraft.ui.components.TextButton
 import se.braindome.urkraft.ui.components.UrkraftDropDownMenu
+import se.braindome.urkraft.R
+import se.braindome.urkraft.ui.components.UrkraftTextField
 import se.braindome.urkraft.ui.theme.Gray20
 import se.braindome.urkraft.ui.theme.Gray40
-import se.braindome.urkraft.ui.theme.Gray60
 import se.braindome.urkraft.ui.theme.Gray80
 import se.braindome.urkraft.ui.theme.Orange80
+import se.braindome.urkraft.ui.theme.Typography
+import se.braindome.urkraft.ui.theme.urkraftTextFieldColors
 
 @Composable
 fun OnboardingScreen() {
@@ -66,7 +76,7 @@ fun OnboardingScreen() {
                             ProgramPropertyPage()
                         }
                         2 -> {
-                            text = "Third page"
+                            ProgramPlanningPage()
                         }
                         3 -> {
                             text = "Fourth page"
@@ -125,63 +135,92 @@ fun ProgramPropertyPage() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
     ) {
-        Spacer(modifier = Modifier.height(120.dp))
-        Text("Name your program", fontSize = 30.sp)
-        Spacer(modifier = Modifier.height(30.dp))
-        TextField(
+        Spacer(modifier = Modifier.height(20.dp))
+        Text("Name your program", style = Typography.titleLarge)
+        Spacer(modifier = Modifier.height(20.dp))
+        UrkraftTextField(
             value = programName,
-            onValueChange = {  },
-            label = { Text("Exercise name") },
-            placeholder = { Text("Enter exercise name") },
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Black,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                focusedContainerColor = Gray20,
-                unfocusedContainerColor = Gray20,
-                disabledContainerColor = Gray40,
-                cursorColor = Color.Black,
-                focusedLabelColor = Color.Black
-
-            ),
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.fillMaxWidth()
-
+            onValueChange = { /* TODO */ },
+            label = "Program name",
         )
-        Spacer(modifier = Modifier.height(30.dp))
-        Text("Number of weeks in a cycle", fontSize = 30.sp)
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+        Text("Number of weeks in a cycle", style = Typography.titleLarge)
+        Spacer(modifier = Modifier.height(20.dp))
         UrkraftDropDownMenu(listOf("1", "2", "3", "4", "5", "6", "7", "8"))
-        Spacer(modifier = Modifier.height(30.dp))
-        Text("Select training days", fontSize = 30.sp)
-        LazyColumn {
+        Spacer(modifier = Modifier.height(20.dp))
+        Text("Select training days", style = Typography.titleLarge)
+        LazyColumn(
+            contentPadding = PaddingValues(vertical = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
             items(weekDays) { day ->
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp)
                 ) {
                     Text(
                         text = day,
-                        fontSize = 25.sp,
+                        style = Typography.titleMedium
                     )
-                    Spacer(modifier = Modifier.size(10.dp))
                     Switch(
                         checked = switchStates.value[day] ?: false,
                         onCheckedChange = { isChecked ->
                             switchStates.value = switchStates.value.toMutableMap().apply { put(day, isChecked) }
                         },
-                        thumbContent = { Text(if (switchStates.value[day] == true) "✓" else "") },
+                        thumbContent = {
+                            //Text(if (switchStates.value[day] == true) "✓" else "")
+                            Icon(
+                                painter = painterResource(
+                                    id = if (switchStates.value[day] == true) R.drawable.check_circle_outline_24
+                                    else R.drawable.switch_unchecked_24),
+                                tint = Color.Black,
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp)
+                                )
+                                       },
                         colors = SwitchDefaults.colors(
                             checkedTrackColor = Gray80,
                             checkedThumbColor = Orange80,
                             uncheckedThumbColor = Gray40,
-                            uncheckedTrackColor = Gray80
-                        )
+                            uncheckedTrackColor = Gray80,
+                            uncheckedBorderColor = Gray40,
+                            checkedBorderColor= Gray40
+                        ),
                     )
                 }
             }
         }
 
+    }
+}
+
+@Composable
+fun ProgramPlanningPage() {
+    LazyColumn (
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
+    ) {
+        items(4) {
+            Column {
+                Text("Week nr", style = Typography.titleMedium)
+                HorizontalDivider()
+                LazyHorizontalGrid(
+                    rows = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(4.dp),
+                    modifier = Modifier.height(300.dp),
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    item { Card(modifier = Modifier.size(120.dp).padding(8.dp).fillMaxSize()) { Text("Workout 1") } }
+                    item { Card(modifier = Modifier.size(120.dp).padding(8.dp).fillMaxSize()) { Text("Workout 2") } }
+                    item { Card(modifier = Modifier.size(120.dp).padding(8.dp).fillMaxSize()) { Text("Workout 3") } }
+                    item { Card(modifier = Modifier.size(120.dp).padding(8.dp).fillMaxSize()) { Text("Workout 4") } }
+                    item { Card(modifier = Modifier.size(120.dp).padding(8.dp).fillMaxSize()) { Text("Workout 5") } }
+                }
+            }
+        }
     }
 }
 
@@ -204,7 +243,12 @@ fun OnboardingScreenPreview() {
 
 @Preview(showBackground = true, backgroundColor = 0xFF555555)
 @Composable
-fun ProgramNamePagePreview() {
+fun ProgramPropertyPagePreview() {
     ProgramPropertyPage()
 }
 
+@Preview(showBackground = true, backgroundColor = 0xFF555555)
+@Composable
+fun ProgramPlanningPagePreview() {
+    ProgramPlanningPage()
+}

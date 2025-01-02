@@ -5,11 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun UrkraftSwitch() {
+fun UrkraftSwitch(
+    onValueChange: (String) -> Unit,
+    value: String,
+) {
 }
 
 @Preview(showBackground = true)
 @Composable
 fun UrkraftSwitchPreview() {
-    UrkraftSwitch()
+    UrkraftSwitch({}, "Test")
 }
