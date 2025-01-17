@@ -79,7 +79,7 @@ fun OnboardingScreen() {
                             ProgramPlanningPage()
                         }
                         3 -> {
-                            text = "Fourth page"
+                            OnboardingEndPage()
                         }
                     }
                     Text(text = text)

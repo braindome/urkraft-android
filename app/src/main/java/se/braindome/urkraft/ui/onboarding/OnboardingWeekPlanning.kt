@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import se.braindome.urkraft.R
 import se.braindome.urkraft.model.Exercise
 import se.braindome.urkraft.model.Repository
+import se.braindome.urkraft.ui.theme.Typography
 import se.braindome.urkraft.ui.theme.Gray20
 import se.braindome.urkraft.ui.theme.Gray40
 import se.braindome.urkraft.ui.theme.Gray60
@@ -87,22 +89,24 @@ fun OnboardingWeekday(day: String) {
             }
         }
         if (isExpanded) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.background(Gray60).fillMaxWidth().padding(4.dp)
-            ) {
-                Spacer(modifier = Modifier.width(28.dp))
-                Text("Exercise", fontSize = 20.sp)
-                Spacer(modifier = Modifier.width(80.dp))
-                Text("Sets", fontSize = 20.sp, modifier = Modifier.width(45.dp))
-                Text("Reps", fontSize = 20.sp, modifier = Modifier.width(45.dp))
-                Text("Weight", fontSize = 20.sp, modifier = Modifier.width(70.dp))
-            }
+
 
             LazyColumn(
-                modifier = Modifier.background(Gray20).fillMaxWidth(),
+                modifier = Modifier.background(Gray20).fillMaxWidth().height(200.dp),
             ){
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.background(Gray60).fillMaxWidth().padding(4.dp)
+                    ) {
+                        Spacer(modifier = Modifier.width(28.dp))
+                        Text("Exercise", style = Typography.titleMedium, modifier = Modifier.weight(2.5f))
+                        Text("Sets", style = Typography.titleMedium, modifier = Modifier.weight(1f))
+                        Text("Reps", style = Typography.titleMedium, modifier = Modifier.weight(1f))
+                        Text("Weight", style = Typography.titleMedium, modifier = Modifier.weight(1.5f))
+                    }
+                }
                 items(Repository.getExercises().size) { index ->
                     OnboardingExercise(Repository.getExercises()[index])
                 }
@@ -135,33 +139,31 @@ fun OnboardingExercise(exercise: Exercise) {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Row(
-                modifier = Modifier.fillMaxWidth().padding(end = 18.dp),
+                modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
                 horizontalArrangement = Arrangement.Start,
             ){
                 Text(
                     text = exercise.name,
-                    fontSize = 16.sp,
-                    modifier = Modifier.width(170.dp)
+                    style = Typography.titleSmall,
+                    modifier = Modifier.weight(2.5f)
                 )
                 Text(
                     text = exercise.sets.toString(),
-                    fontSize = 16.sp,
+                    style = Typography.titleSmall,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.width(45.dp)
+                    modifier = Modifier.weight(1f)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = exercise.reps.toString(),
-                    fontSize = 16.sp,
+                    style = Typography.titleSmall,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.width(45.dp)
+                    modifier = Modifier.weight(1f)
                 )
-                Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = exercise.weight.toString(),
-                    fontSize = 16.sp,
+                    style = Typography.titleSmall,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.width(80.dp)
+                    modifier = Modifier.weight(1.5f)
                 )
             }
         }
