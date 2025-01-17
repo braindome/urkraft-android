@@ -2,7 +2,6 @@ package se.braindome.urkraft.ui.workout
 
 import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,9 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.braindome.urkraft.model.CalenderRepository
-import se.braindome.urkraft.ui.theme.Gray20
 import se.braindome.urkraft.ui.theme.Gray40
-import se.braindome.urkraft.ui.theme.Gray60
 import se.braindome.urkraft.ui.theme.Gray80
 import se.braindome.urkraft.ui.theme.Orange80
 import timber.log.Timber
@@ -207,7 +203,6 @@ fun DayCell(day: Int, isCurrentMonth: Boolean, date: Date, selectedDate: Mutable
 
 @Composable
 fun WeekNumberCell(weekNumber: Int) {
-    // Display the week number
     Box(
         modifier = Modifier
             .padding(2.dp)

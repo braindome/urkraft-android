@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "se.braindome.urkraft"
-        minSdk = 26
+        minSdk = 31
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -91,9 +91,11 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
 
-
+    // Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.timber)
     implementation(libs.logger)

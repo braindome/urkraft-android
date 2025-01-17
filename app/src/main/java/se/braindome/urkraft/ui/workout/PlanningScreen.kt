@@ -2,8 +2,6 @@ package se.braindome.urkraft.ui.workout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -25,7 +23,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import se.braindome.urkraft.ui.theme.Gray20
 import se.braindome.urkraft.ui.theme.Gray60
 import se.braindome.urkraft.ui.theme.Gray80
 import se.braindome.urkraft.ui.theme.Orange60
@@ -44,14 +41,11 @@ fun PlanningScreen() {
     val dailyPlanningViewModel: DailyPlanningViewModel = viewModel()
     Scaffold(
         topBar = { PlanningTopNavBar(navController) },
-        //modifier = Modifier.fillMaxSize()
         bottomBar = { Box(modifier = Modifier.background(Gray80)) }
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .padding(paddingValues)
-                //.fillMaxSize()
-                //.background(Gray60)
         ) {
             NavHost(
                 navController = navController,

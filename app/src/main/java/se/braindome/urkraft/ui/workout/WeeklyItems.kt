@@ -140,8 +140,6 @@ fun WorkoutDialog(onDismissRequest: () -> Unit = {}) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
-                    //.padding(8.dp)
-                    //.background(MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Text(text = "Weekday", fontSize = 16.sp)
                 Column(

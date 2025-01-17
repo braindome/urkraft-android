@@ -57,7 +57,6 @@ object Repository {
             Exercise(name = "Overhead Press", sets = 3, reps = 10, weight = 40.0),
             Exercise(name = "Lateral Raise", sets = 3, reps = 15, weight = 15.0),
             Exercise(name = "Front Raise", sets = 3, reps = 15, weight = 15.0)
-            // Add more exercises as needed
         )
     }
 
@@ -68,7 +67,6 @@ object Repository {
             Exercise(name = "Dumbbell Flyes", sets = 3, reps = 10, weight = 20.0),
             Exercise(name = "Squats", sets = 3, reps = 10, weight = 70.0),
             Exercise(name = "Leg Press", sets = 3, reps = 10, weight = 100.0),
-            // Add more exercises as needed
         )
     }
 
