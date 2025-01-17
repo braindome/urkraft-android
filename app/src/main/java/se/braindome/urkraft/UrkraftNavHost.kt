@@ -15,7 +15,6 @@ fun UrkraftNavHost() {
 
     NavHost(navController = navController, startDestination = "home") {
         composable(UrkraftRoutes.PLANNING.route) {
-            // TodayScreen(TodayScreenViewModel())
             DailyWorkoutScreen(DailyPlanningViewModel(), navController)
         }
         composable(UrkraftRoutes.DASHBOARD.route) { UrkraftApp() }

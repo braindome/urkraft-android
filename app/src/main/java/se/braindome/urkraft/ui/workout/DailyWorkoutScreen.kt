@@ -95,7 +95,6 @@ fun DailyWorkoutScreen(
                     viewModel.resetExerciseValues()
                     isAddExerciseScreenOpen = true
                     navController.navigate(
-                        //UrkraftRoutes.ADD_EXERCISE.route
                         PlanningScreenRoutes.NewExercise.route
                     )
                 }

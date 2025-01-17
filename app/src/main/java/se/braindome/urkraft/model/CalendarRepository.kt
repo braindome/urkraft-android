@@ -58,7 +58,6 @@ object CalenderRepository {
     }
 
 
-    // Generate days for a given month
     fun generateDaysForMonth(date: Date): List<DateInfo> {
         val calendar = Calendar.getInstance(Locale.getDefault())
         calendar.time = date

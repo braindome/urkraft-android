@@ -169,7 +169,6 @@ fun ProgramPropertyPage() {
                             switchStates.value = switchStates.value.toMutableMap().apply { put(day, isChecked) }
                         },
                         thumbContent = {
-                            //Text(if (switchStates.value[day] == true) "✓" else "")
                             Icon(
                                 painter = painterResource(
                                     id = if (switchStates.value[day] == true) R.drawable.check_circle_outline_24
@@ -203,22 +202,20 @@ fun ProgramPlanningPage() {
         modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
     ) {
         items(4) {
-            Column {
-                Text("Week nr", style = Typography.titleMedium)
-                HorizontalDivider()
-                LazyHorizontalGrid(
-                    rows = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(4.dp),
-                    modifier = Modifier.height(300.dp),
-                    verticalArrangement = Arrangement.SpaceAround,
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    item { Card(modifier = Modifier.size(120.dp).padding(8.dp).fillMaxSize()) { Text("Workout 1") } }
-                    item { Card(modifier = Modifier.size(120.dp).padding(8.dp).fillMaxSize()) { Text("Workout 2") } }
-                    item { Card(modifier = Modifier.size(120.dp).padding(8.dp).fillMaxSize()) { Text("Workout 3") } }
-                    item { Card(modifier = Modifier.size(120.dp).padding(8.dp).fillMaxSize()) { Text("Workout 4") } }
-                    item { Card(modifier = Modifier.size(120.dp).padding(8.dp).fillMaxSize()) { Text("Workout 5") } }
-                }
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text("Week nr", style = Typography.titleLarge)
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    color = Color.Black
+                )
+                OnboardingWeekday("Monday")
+                OnboardingWeekday("Tuesday")
+                OnboardingWeekday("Wednesday")
+                OnboardingWeekday("Thursday")
+                OnboardingWeekday("Friday")
             }
         }
     }

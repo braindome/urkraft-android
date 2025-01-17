@@ -3,7 +3,6 @@ package se.braindome.urkraft.ui.workout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,28 +25,12 @@ import se.braindome.urkraft.ui.theme.Orange60
 
 @Composable
 fun MonthlyPlanningScreen() {
-
         Column(
             //modifier = Modifier.fillMaxSize(),
         ) {
-            //MonthSelectorBar()
             GridCalendar()
-            //UrkraftDatePicker()
             WorkoutPreview()
         }
-        /*
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            MonthSelectorBar()
-            GridCalendar()
-
-        }
-
-         */
-
 }
 
 @Composable
