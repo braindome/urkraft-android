@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import se.braindome.urkraft.ui.onboarding.OnboardingScreen
 
 @Composable
 fun ProfileScreen() {
@@ -19,7 +20,8 @@ fun ProfileScreen() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Profile", fontSize = 30.sp, color = Color.Black )
+            // Temporary placement for onboarding screen
+            OnboardingScreen()
         }
     }
 

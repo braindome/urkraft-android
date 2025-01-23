@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -67,6 +68,8 @@ import se.braindome.urkraft.ui.components.NumericInputType
 import se.braindome.urkraft.ui.components.NumericTextField
 import se.braindome.urkraft.ui.components.SetCheckbox
 import se.braindome.urkraft.ui.components.TextButton
+import se.braindome.urkraft.ui.components.TextDropDownMenu
+import se.braindome.urkraft.ui.components.UrkraftDropDownMenu
 import se.braindome.urkraft.ui.theme.Gray10
 import se.braindome.urkraft.ui.theme.Gray20
 import se.braindome.urkraft.ui.theme.Gray40
@@ -90,6 +93,7 @@ fun AddExerciseScreen(
     var showColorPicker by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     var isAmrap by rememberSaveable { mutableStateOf(false) }
+    var isPercentage by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(exerciseToEditId) {
         val exerciseToEdit = viewModel.getExerciseById(exerciseToEditId)
@@ -210,253 +214,153 @@ fun AddExerciseScreen(
             }
         }
 
-        Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.padding(4.dp))
 
-        if (!isAmrap) {
-            Column {
+
+        Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Center) {
+            Text(
+                text = "Use a percentage of 1RM?",
+                fontSize = 18.sp,
+                textAlign = TextAlign.Start,
+                color = Gray20
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Number of sets",
-                        modifier = Modifier.weight(1f),
+                        text = "Yes",
                         fontSize = 18.sp,
                         textAlign = TextAlign.Start,
                         color = Gray20
                     )
-                    Spacer(modifier = Modifier.weight(0.5f))
-                    NumericTextField(
-                        value = uiState.sets.takeIf { it != 0 }?.toString() ?: "",
-                        onValueChange = {
-                            if (it.isEmpty()) {
-                                viewModel.updateSets(0)
-                            } else {
-                                val newValue = it.toIntOrNull()
-                                if (newValue != null && newValue in 1..20) {
-                                    viewModel.updateSets(newValue)
-                                }
-                            }
-                        },
-                        inputType = NumericInputType.SETS,
-                        modifier = Modifier.weight(1f)
+                    RadioButton(
+                        selected = isPercentage,
+                        onClick = { isPercentage = true },
+                        colors = RadioButtonColors(
+                            selectedColor = Orange60,
+                            unselectedColor = Gray20,
+                            disabledSelectedColor = Gray20,
+                            disabledUnselectedColor = Gray20
+                        )
                     )
                 }
-                Spacer(modifier = Modifier.padding(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Number of reps",
-                        modifier = Modifier.weight(1f),
+                        text = "No",
                         fontSize = 18.sp,
                         textAlign = TextAlign.Start,
                         color = Gray20
                     )
-                    Spacer(modifier = Modifier.weight(0.5f))
-                    NumericTextField(
-                        value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
-                        onValueChange = {
-                            if (it.isEmpty()) {
-                                viewModel.updateReps(0)
-                            } else {
-                                val newValue = it.toIntOrNull()
-                                if (newValue != null && newValue in 1..50) {
-                                    viewModel.updateReps(newValue)
-                                }
-                            }
-                        },
-                        inputType = NumericInputType.REPS,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                Spacer(modifier = Modifier.padding(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Weight",
-                        modifier = Modifier.weight(1f),
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Start,
-                        color = Gray20
-                    )
-                    Spacer(modifier = Modifier.weight(0.5f))
-                    DecimalTextField(
-                        value =  if (uiState.weight == "0.0") "" else uiState.weight.removeSuffix(".0"),
-                        onValueChange = {
-                            val sanitizedInput = it.replace(',', '.')
-                            if (sanitizedInput.isEmpty() || sanitizedInput == "." || sanitizedInput.toDoubleOrNull() != null ) {
-                                viewModel.updateWeight(sanitizedInput)
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-            }
-        } else {
-            Column {
-                Spacer(modifier = Modifier.padding(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Minimum reps",
-                        modifier = Modifier.weight(1f),
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Start,
-                        color = Gray20
-                    )
-                    Spacer(modifier = Modifier.weight(0.5f))
-                    NumericTextField(
-                        value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
-                        onValueChange = {
-                            if (it.isEmpty()) {
-                                viewModel.updateReps(0)
-                            } else {
-                                val newValue = it.toIntOrNull()
-                                if (newValue != null && newValue in 1..50) {
-                                    viewModel.updateReps(newValue)
-                                }
-                            }
-                        },
-                        inputType = NumericInputType.REPS,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                Spacer(modifier = Modifier.padding(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Weight",
-                        modifier = Modifier.weight(1f),
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Start,
-                        color = Gray20
-                    )
-                    Spacer(modifier = Modifier.weight(0.5f))
-                    DecimalTextField(
-                        value =  if (uiState.weight == "0.0") "" else uiState.weight.removeSuffix(".0"),
-                        onValueChange = {
-                            val sanitizedInput = it.replace(',', '.')
-                            if (sanitizedInput.isEmpty() || sanitizedInput == "." || sanitizedInput.toDoubleOrNull() != null ) {
-                                viewModel.updateWeight(sanitizedInput)
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
+                    RadioButton(
+                        selected = !isPercentage,
+                        onClick = { isPercentage = false },
+                        colors = RadioButtonColors(
+                            selectedColor = Orange60,
+                            unselectedColor = Gray20,
+                            disabledSelectedColor = Gray20,
+                            disabledUnselectedColor = Gray20
+                        )
                     )
                 }
             }
         }
 
+        Spacer(modifier = Modifier.padding(4.dp))
 
-        /*
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.height(50.dp).padding(vertical = 12.dp)
+            ) {
+                Text(
+                    text = "Parent Exercise",
+                    modifier = Modifier.weight(1f).fillMaxHeight().align(Alignment.CenterVertically),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Start,
+                    color = Gray20
+                )
+                Spacer(modifier = Modifier.weight(0.5f))
 
-        Row {
-            NumericTextField(
-                value = uiState.sets.takeIf { it != 0 }?.toString() ?: "",
-                onValueChange = {
-                    if (it.isEmpty()) {
-                        viewModel.updateSets(0)
-                    } else {
-                        val newValue = it.toIntOrNull()
-                        if (newValue != null && newValue in 1..20) {
-                            viewModel.updateSets(newValue)
+                TextDropDownMenu(
+                    options = listOf("Squat", "Bench Press", "Deadlift", "Overhead Press"),
+                    disabled = if (isPercentage) false else true
+                )
+
+            }
+            Spacer(modifier = Modifier.padding(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Number of sets",
+                    modifier = Modifier.weight(1f),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Start,
+                    color = Gray20
+                )
+                Spacer(modifier = Modifier.weight(0.5f))
+                NumericTextField(
+                    value = uiState.sets.takeIf { it != 0 }?.toString() ?: "",
+                    onValueChange = {
+                        if (it.isEmpty()) {
+                            viewModel.updateSets(0)
+                        } else {
+                            val newValue = it.toIntOrNull()
+                            if (newValue != null && newValue in 1..20) {
+                                viewModel.updateSets(newValue)
+                            }
                         }
-                    }
-                },
-                inputType = NumericInputType.SETS,
-                modifier = Modifier.weight(1f)
-            )
-            /*
-            TextField(
-                value = uiState.sets.takeIf { it != 0 }?.toString() ?: "",
-                onValueChange = { viewModel.updateSets(it.toIntOrNull() ?: 0) },
-                label = { Text("Sets") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .weight(1f),
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Black,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    focusedContainerColor = Gray20,
-                    unfocusedContainerColor = Gray20,
-                    disabledContainerColor = Gray40,
-                    cursorColor = Color.Black,
-                    focusedLabelColor = Color.Black
-
-                ),
-                shape = RoundedCornerShape(8.dp)
-            )*/
-            Spacer(modifier = Modifier.width(8.dp))
-            NumericTextField(
-                value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
-                onValueChange = {
-                    if (it.isEmpty()) {
-                        viewModel.updateReps(0)
-                    } else {
-                        val newValue = it.toIntOrNull()
-                        if (newValue != null && newValue in 1..50) {
-                            viewModel.updateReps(newValue)
+                    },
+                    inputType = NumericInputType.SETS,
+                    modifier = Modifier.weight(1f),
+                    enabled = if (isAmrap) false else true
+                )
+            }
+            Spacer(modifier = Modifier.padding(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = if(isAmrap) "Min Reps" else "Number of reps",
+                    modifier = Modifier.weight(1f),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Start,
+                    color = Gray20
+                )
+                Spacer(modifier = Modifier.weight(0.5f))
+                NumericTextField(
+                    value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
+                    onValueChange = {
+                        if (it.isEmpty()) {
+                            viewModel.updateReps(0)
+                        } else {
+                            val newValue = it.toIntOrNull()
+                            if (newValue != null && newValue in 1..50) {
+                                viewModel.updateReps(newValue)
+                            }
                         }
-                    }
-                },
-                inputType = NumericInputType.REPS,
-                modifier = Modifier.weight(1f)
-            )
-            /*
-            TextField(
-                value = uiState.reps.takeIf { it != 0 }?.toString() ?: "",
-                onValueChange = { viewModel.updateReps(it.toIntOrNull() ?: 0) },
-                label = { Text("Reps") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .weight(1f),
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Black,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    focusedContainerColor = Gray20,
-                    unfocusedContainerColor = Gray20,
-                    disabledContainerColor = Gray40,
-                    cursorColor = Color.Black,
-                    focusedLabelColor = Color.Black
-                ),
-                shape = RoundedCornerShape(8.dp)
-            )
-            */
-            Spacer(modifier = Modifier.width(8.dp))
-            DecimalTextField(
-                value =  if (uiState.weight == "0.0") "" else uiState.weight.removeSuffix(".0"),
-                onValueChange = {
-                    val sanitizedInput = it.replace(',', '.')
-                    if (sanitizedInput.isEmpty() || sanitizedInput == "." || sanitizedInput.toDoubleOrNull() != null ) {
-                        viewModel.updateWeight(sanitizedInput)
-                    }
-                },
-                modifier = Modifier.weight(1f),
-            )
-            /*
-            TextField(
-                value =  if (uiState.weight == "0.0") "" else uiState.weight.removeSuffix(".0"),
-                onValueChange = {
-                    val sanitizedInput = it.replace(',', '.')
-                    if (sanitizedInput.isEmpty() || sanitizedInput == "." || sanitizedInput.toDoubleOrNull() != null ) {
-                        viewModel.updateWeight(sanitizedInput)
-                    }
-                },
-                label = { Text("Weight") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f),
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Black,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    focusedContainerColor = Gray20,
-                    unfocusedContainerColor = Gray20,
-                    disabledContainerColor = Gray40,
-                    cursorColor = Color.Black,
-                    focusedLabelColor = Color.Black
-
-                ),
-                shape = RoundedCornerShape(8.dp)
-            )
-
-             */
+                    },
+                    inputType = NumericInputType.REPS,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            Spacer(modifier = Modifier.padding(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Weight",
+                    modifier = Modifier.weight(1f),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Start,
+                    color = Gray20
+                )
+                Spacer(modifier = Modifier.weight(0.5f))
+                DecimalTextField(
+                    value =  if (uiState.weight == "0.0") "" else uiState.weight.removeSuffix(".0"),
+                    onValueChange = {
+                        val sanitizedInput = it.replace(',', '.')
+                        if (sanitizedInput.isEmpty() || sanitizedInput == "." || sanitizedInput.toDoubleOrNull() != null ) {
+                            viewModel.updateWeight(sanitizedInput)
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
-
-         */
 
         Spacer(modifier = Modifier.padding(8.dp))
 
@@ -574,7 +478,7 @@ fun TodayExerciseRow(exercise: Exercise, onLongPress: (Exercise) -> Unit) {
         )
     ) {
         Row(
-            
+
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp)

@@ -31,7 +31,8 @@ fun NumericTextField(
     onValueChange: (String) -> Unit,
     value: String,
     inputType: NumericInputType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     val numericRegex = when (inputType) {
         NumericInputType.SETS -> Regex("^$|^([1-9][0-9]{0,1}|20)$")
@@ -40,6 +41,7 @@ fun NumericTextField(
 
     TextField(
         value = value,
+        enabled = enabled,
         onValueChange = {
             val newValue = it
             if (newValue.matches(numericRegex)) {
