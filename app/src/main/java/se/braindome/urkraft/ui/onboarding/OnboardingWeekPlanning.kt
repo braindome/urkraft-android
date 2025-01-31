@@ -39,9 +39,12 @@ import se.braindome.urkraft.ui.theme.Gray40
 import se.braindome.urkraft.ui.theme.Gray60
 import se.braindome.urkraft.ui.theme.Gray80
 import se.braindome.urkraft.ui.theme.Orange80
+import timber.log.Timber
 
 @Composable
 fun OnboardingWeekPlanning() {
+    Timber.tag("OnboardingWeekPlanning").d("Composable loaded")
+
     val cycleWeeks = listOf(1, 2, 3, 4)
     LazyColumn { items(cycleWeeks.size) { week ->
         Column {

@@ -1,5 +1,11 @@
 package se.braindome.urkraft.ui.onboarding
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
@@ -24,9 +31,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +44,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import se.braindome.urkraft.R
 import se.braindome.urkraft.ui.components.TextButton
 import se.braindome.urkraft.ui.components.UrkraftDropDownMenu
@@ -43,35 +54,49 @@ import se.braindome.urkraft.ui.theme.Gray40
 import se.braindome.urkraft.ui.theme.Gray80
 import se.braindome.urkraft.ui.theme.Orange80
 import se.braindome.urkraft.ui.theme.Typography
+import timber.log.Timber
 
 @Composable
 fun OnboardingScreen() {
+    //Timber.tag("OnboardingScreen").d("Composable loaded")
     val pagerState = rememberPagerState(0, 0F, { 4 })
+    val coroutineScope = rememberCoroutineScope()
     var text = remember {""}
     Box(modifier = Modifier.fillMaxHeight()) {
-        HorizontalPager(state = pagerState) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(8.dp),
-                    verticalArrangement = Arrangement.Center,
+        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
+            AnimatedVisibility(
+                visible = pagerState.currentPage == page,
+                enter = slideInHorizontally { width -> width },
+                exit = slideOutHorizontally { width -> -width }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    when (pagerState.currentPage) {
-                        0 -> {
-                            ProgramSelectionPage()
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        when (pagerState.currentPage) {
+                            0 -> {
+                                ProgramSelectionPage(pagerState, coroutineScope)
+                            }
+                            1 -> {
+                                ProgramPropertyPage()
+                            }
+                            2 -> {
+                                ProgramPlanningPage()
+                            }
+                            3 -> {
+                                OnboardingEndPage()
+                            }
                         }
-                        1 -> {
-                            ProgramPropertyPage()
-                        }
-                        2 -> {
-                            ProgramPlanningPage()
-                        }
-                        3 -> {
-                            OnboardingEndPage()
-                        }
+                        Text(text = text)
                     }
-                    Text(text = text)
                 }
             }
+
         }
 
         Column(
@@ -90,7 +115,8 @@ fun OnboardingScreen() {
 }
 
 @Composable
-fun ProgramSelectionPage() {
+fun ProgramSelectionPage(pagerState: PagerState, coroutineScope: CoroutineScope) {
+    Timber.tag("ProgramSelectionPage").d("Composable loaded")
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -101,7 +127,14 @@ fun ProgramSelectionPage() {
         Spacer(modifier = Modifier.height(60.dp))
         Text("Create a new program",fontSize = 25.sp)
         Spacer(modifier = Modifier.height(30.dp))
-        TextButton(onClick = { /* TODO: Navigate to create program screen */ }, label = "Start")
+        TextButton(
+            onClick = {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(1)
+                }
+            },
+            label = "Start"
+        )
         Spacer(modifier = Modifier.height(30.dp))
         HorizontalDivider()
         Spacer(modifier = Modifier.height(30.dp))
@@ -114,6 +147,8 @@ fun ProgramSelectionPage() {
 
 @Composable
 fun ProgramPropertyPage() {
+    Timber.tag("ProgramPropertyPage").d("Composable loaded")
+
     val programName by rememberSaveable { mutableStateOf("") }
     val weekDays = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
     val switchStates = rememberSaveable { mutableStateOf(weekDays.associateWith { false }) }
@@ -183,6 +218,7 @@ fun ProgramPropertyPage() {
 
 @Composable
 fun ProgramPlanningPage() {
+    Timber.tag("ProgramPlanningPage").d("Composable loaded")
     LazyColumn (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,

@@ -14,9 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import se.braindome.urkraft.ui.theme.Typography
 import se.braindome.urkraft.ui.components.TextButton
+import timber.log.Timber
 
 @Composable
 fun OnboardingEndPage() {
+    Timber.tag("OnboardingEndPage").d("Composable loaded")
+
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,

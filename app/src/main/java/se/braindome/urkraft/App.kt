@@ -28,11 +28,16 @@ class App : Application() {
                 message: String,
                 t: Throwable?
             ) {
+                val currentScreen = getCurrentScreen(tag)
                 Logger.log(priority, "-$tag", message, t)
             }
         })
 
         Timber.d("onCreate: Inside Application!")
 
+    }
+
+    private fun getCurrentScreen(tag: String?): String {
+        return tag ?: "Unknown Composable"
     }
 }
