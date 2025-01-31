@@ -1,0 +1,55 @@
+@startuml
+class User {
+    String id
+    String name
+    List<OneRepMax> oneRepMaxes
+    List<Workout> workouts
+    List<TrainingPlan> trainingPlans
+    boolean usingMetric
+}
+class MesoCycle {
+    String id
+    String name
+    List<MicroCycle> microCycles
+}
+class MicroCycle {
+    String id
+    int weekNumber
+    Map<String, Workout> workouts
+}
+class Workout {
+    String id
+    String name
+    String weekDay
+    List<Exercise> exercises
+    String date
+}
+
+class Exercise {
+    String id
+    String name
+    int sets
+    int reps
+    Double weight
+    String color
+}
+class OneRepMax {
+    String exerciseId
+    double oneRepMax
+    double estimateOneRepMax(double weight, int reps)
+
+}
+class Workout {
+    String id
+    String name
+    List<Exercise> exercises
+    Date date
+}
+
+User "1" *-- "many" OneRepMax
+User "1" *-- "many" Workout
+User "1" *-- "many" MesoCycle
+MesoCycle "1" *-- "many" MicroCycle
+MicroCycle "1" *-- "many" Workout
+Workout "1" *-- "many" Exercise
+@enduml

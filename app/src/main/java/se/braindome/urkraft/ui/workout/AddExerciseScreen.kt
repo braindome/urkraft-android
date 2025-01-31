@@ -540,6 +540,7 @@ fun AddExerciseScreenPreview() {
     )
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun TodayScreenPreview() {
@@ -548,6 +549,8 @@ fun TodayScreenPreview() {
 
     }
 }
+
+ */
 
 @Preview(showBackground = true)
 @Composable

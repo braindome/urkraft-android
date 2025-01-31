@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import se.braindome.urkraft.R
 import timber.log.Timber
 
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayScreen(viewModel: DailyPlanningViewModel) {
@@ -79,3 +80,5 @@ fun TodayScreen(viewModel: DailyPlanningViewModel) {
 
 }
 
+
+ */
