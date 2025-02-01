@@ -1,6 +1,12 @@
 package se.braindome.urkraft.ui.onboarding
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +18,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,12 +36,16 @@ fun OnboardingScreen() {
     val pagerState = rememberPagerState(0, 0F, { 4 })
     val coroutineScope = rememberCoroutineScope()
     var text = remember {""}
+    val fling = PagerDefaults.flingBehavior(
+        state = pagerState,
+        pagerSnapDistance = PagerSnapDistance.atMost(10)
+    )
     Box(modifier = Modifier.fillMaxHeight()) {
-        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
+        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize(), flingBehavior = fling) { page ->
             AnimatedVisibility(
                 visible = pagerState.currentPage == page,
-                enter = slideInHorizontally { width -> width },
-                exit = slideOutHorizontally { width -> -width }
+                enter = fadeIn(animationSpec = tween()),
+                exit = fadeOut(animationSpec = tween()),
             ) {
                 Box(
                     modifier = Modifier
